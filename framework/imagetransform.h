@@ -6,6 +6,7 @@
 class ImageTransform : public Transform {
  public:
   explicit ImageTransform();
+  //elplicit:其限定的其类的构造函数只能被显式调用(即不能使用"="进行赋值，要用构造函数赋值)
   explicit ImageTransform(const QPointF &pos);
   ImageTransform(const ImageTransform &) = delete;
   ImageTransform &operator=(const ImageTransform &) = delete;
@@ -20,7 +21,7 @@ class ImageTransform : public Transform {
  protected:
   QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget = nullptr) override;
+             QWidget *widget = nullptr) override;//系统自带
 
  protected:
   QImage image;

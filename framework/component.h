@@ -10,7 +10,7 @@ class Component : public QObject {
   Q_OBJECT
 
  public:
-  Component();
+  Component();  // Component 负责执行游戏逻辑并更新游戏场景
   Component(const Component &) = delete;
   Component &operator=(const Component &) = delete;
 
@@ -34,7 +34,7 @@ class Component : public QObject {
   // 将 gameObject 从 GameScene 中移除并销毁（delete）
   void destory(GameObject *gameObject);
 
-  // Keyboard input API
+  // Keyboard input API(API:应用程序接口)
  public:
   // 判断某个按键是否被按下
   bool getKey(Qt::Key key);
@@ -48,7 +48,7 @@ class Component : public QObject {
   // 所属 gameObject 的 Transform 被点击时调用
   virtual void onClick(QGraphicsSceneMouseEvent *ev) {}
 
-  // Miscellaneous
+  // Miscellaneous（杂项）
  public:
   GameObject *getParentGameObject();
   void setParentGameObject(GameObject *gameObject);

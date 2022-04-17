@@ -9,7 +9,7 @@
 
 GameScene::GameScene() {
   updateTimer = new QTimer(this);
-  updateTimer->setInterval(1000 / 60);
+  updateTimer->setInterval(1000 / 60);//以毫秒为单位
   connect(updateTimer, &QTimer::timeout, this, &GameScene::onUpdate);
   updateTimer->start();
 }
@@ -24,6 +24,7 @@ GameScene::~GameScene() {
 
 void GameScene::attachGameObject(GameObject *gameObject) {
   gameObjectsToAttach.emplace_back(gameObject);
+  //Adds a new element to the end for the container
 }
 void GameScene::detachGameObject(GameObject *gameObject) {
   gameObjectsToDetach.emplace_back(gameObject);
@@ -51,6 +52,7 @@ void GameScene::onUpdate() {
     gameObject->onDetach();
     gameObject->setParentGameScene(nullptr);
     this->gameObjects.removeAll(gameObject);
+    //移走所有是gameObject的物品，返回数量
     auto tf = gameObject->getComponent<Transform>();
     if (tf != nullptr) this->removeItem(tf);
   }
@@ -81,6 +83,7 @@ void GameScene::keyPressEvent(QKeyEvent *ev) {
 void GameScene::keyReleaseEvent(QKeyEvent *ev) {
   if (ev->isAutoRepeat()) return;
   keyTable[ev->key()] = false;
+  //Returns the code of the key that was pressed or released
   keyUpTable[ev->key()] = true;
   QGraphicsScene::keyReleaseEvent(ev);
 }

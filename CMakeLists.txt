@@ -10,6 +10,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_PREFIX_PATH "C:/Qt/6.0.4/mingw81_64/lib/cmake")
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
@@ -32,6 +33,11 @@ set(PROJECT_SOURCES
         hitable.h hitable.cpp
         shooter.h shooter.cpp
         summondummy.h summondummy.cpp
+        physics.h physics.cpp
+        usercontroller.h usercontroller.cpp
+        player.h player.cpp
+        map.h map.cpp
+        image.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

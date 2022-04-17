@@ -32,7 +32,7 @@ class GameObject final : public QObject {
   // Lifecycle functions
  public:
   // GameObject 中所有 Component 已添加完成，在挂载到 GameScene 前调用
-  void onAttach();
+  void onAttach();//用这个调用其他组件的指针
   // GameScene 渲染第一帧前调用
   void onFirstUpdate();
   // 每一次更新游戏状态时调用，参数为距上次更新的秒数

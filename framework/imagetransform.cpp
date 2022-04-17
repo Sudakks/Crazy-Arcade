@@ -2,7 +2,7 @@
 
 #include <QPainter>
 #include <utility>
-
+//这是一个类一个类一个类
 ImageTransform::ImageTransform() {}
 ImageTransform::ImageTransform(const QPointF &pos) {}
 
@@ -18,25 +18,34 @@ bool ImageTransform::setImage(const char *path) {
 }
 bool ImageTransform::setImage(const QString &path) {
   bool succeeded = this->image.load(path);
+  //这里的path就是文件名
+  //Loads an image from the file with the given fileName.
+  //Returns true if the image was successfully loaded;
+  //otherwise invalidates the image and returns false
   updateImageRect();
   return succeeded;
 }
 
 void ImageTransform::setOffset(const QPointF &offset) {
-  this->offset = offset;
+  this->offset = offset;//offset具有x和y轴方向的偏移量
   updateImageRect();
 }
 void ImageTransform::setAlignment(Qt::Alignment alignment) {
-  this->alignment = alignment;
+  this->alignment = alignment;//设置图片的位置？
   updateImageRect();
 }
 
 void ImageTransform::updateImageRect() {
   this->prepareGeometryChange();
+  //使scene提前知道item要改变了
   imageRect = this->image.rect();
+  //返回包裹着这个图形的矩形
   imageRect.translate(this->offset);
+  //这个是将imageRect移动offset的偏移量
   QPointF alignmentPoint;
+  //接下来是水平和竖直方向的调整
   switch (this->alignment & Qt::AlignHorizontal_Mask) {
+  //说明alignment是AlignHorizontal_Mask中的一个
     case Qt::AlignLeft:
       alignmentPoint.setX(0);
       break;
@@ -59,6 +68,7 @@ void ImageTransform::updateImageRect() {
       break;
   }
   imageRect.translate(-alignmentPoint);
+  //为什么有两个translate？？？
 }
 
 QRectF ImageTransform::boundingRect() const { return this->imageRect; }
@@ -66,7 +76,7 @@ void ImageTransform::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget) {
   if (this->image.isNull()) return;
-  Q_UNUSED(option);
+  Q_UNUSED(option);//suppress the warning from the compiler
   Q_UNUSED(widget);
   painter->drawImage(this->boundingRect(), this->image);
 }

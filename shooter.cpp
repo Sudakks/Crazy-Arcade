@@ -3,13 +3,16 @@
 #include <ammo.h>
 #include <gameobject.h>
 #include <transform.h>
+#include <QDebug>
 
 #include <QGraphicsRectItem>
+#include <imagetransform.h>
 
 Shooter::Shooter() : Component() {}
 
 void Shooter::onAttach() {
   this->transform = this->gameObject->getComponent<Transform>();
+  //qDebug() << " aaaa";
   Q_ASSERT(this->transform != nullptr);
   auto rect = new QGraphicsRectItem(this->transform);
   rect->setRect(QRectF(-30, -30, 60, 60));

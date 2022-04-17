@@ -4,7 +4,7 @@
 #include <component.h>
 #include <gameobject.h>
 #include <transform.h>
-
+//弹药
 class Ammo : public Component {
  public:
   explicit Ammo(QPointF velocity);

@@ -20,6 +20,7 @@ void Transform::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 }
 
 void Transform::mousePressEvent(QGraphicsSceneMouseEvent *ev) {
+//When a QGraphicsView receives a QMouseEvent, it translates it to a QGraphicsSceneMouseEvent
   QGraphicsItem::mousePressEvent(ev);
   this->gameObject->onClick(ev);
 }

@@ -2,6 +2,7 @@
 #define SHOOTER_H_
 
 #include "component.h"
+#include "imagetransform.h"
 
 class Transform;
 

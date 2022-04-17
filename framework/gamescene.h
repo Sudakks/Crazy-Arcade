@@ -24,6 +24,10 @@ class GameScene final : public QGraphicsScene {
 
  private:
   QTimer *updateTimer = nullptr;
+  //新建： QTimer *timer = new QTimer(this)
+  //连接：connect(timer, &QTimer::timeout, this, QOverload<>::of(&AnalogClock::update));
+  //设定开始的时长：timer->start(1000);
+  //From then on, the update() slot is called every second
   QList<GameObject *> gameObjects;
   QList<GameObject *> gameObjectsToAttach;
   QList<GameObject *> gameObjectsToDetach;

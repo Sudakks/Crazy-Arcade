@@ -13,6 +13,7 @@ GameObject::~GameObject() {
 
 void GameObject::addComponent(Component *component) {
   component->setParentGameObject(this);
+  //就是将这个component的特性加到这个gameobject上
   components.append(component);
 }
 void GameObject::removeComponent(Component *component) {
@@ -66,6 +67,7 @@ bool GameObject::getKeyUp(Qt::Key key) {
 void GameObject::onClick(QGraphicsSceneMouseEvent *ev) {
   for (auto component : components) {
     component->onClick(ev);
+    //让它的组件执行mouse的要求
   }
 }
 
