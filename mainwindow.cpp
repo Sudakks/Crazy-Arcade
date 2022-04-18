@@ -18,9 +18,11 @@
 #include "hitable.h"
 #include <QRandomGenerator>
 #include "imagetransform.h"
+#include "common.h"
 
+map My_map;
 void loadScene(GameScene *gameScene) {
-  auto shooter = new GameObject();
+ /* auto shooter = new GameObject();
   //这个是用来绘图的
   ImageTransformBuilder()
       .setPos(QPointF(100, 100))
@@ -33,6 +35,9 @@ void loadScene(GameScene *gameScene) {
   summonDummyBtn->addComponent(new Transform);
   summonDummyBtn->addComponent(new SummonDummy);
   gameScene->attachGameObject(summonDummyBtn);
+*/
+
+  /*
   //
   auto obj = new GameObject();
   auto transform = new Transform();
@@ -44,10 +49,9 @@ void loadScene(GameScene *gameScene) {
   obj->addComponent(new UserController());
   //属性都好了，再加到scene里面
   gameScene->attachGameObject(obj);
-
+*/
 
   //加载地图图片
-  map My_map;
   My_map.init_Map();
   //上面的围栏
   for(int i = 0; i < 3; i++)
@@ -85,7 +89,7 @@ void loadScene(GameScene *gameScene) {
                 if(My_map.get_map(i,j) == 1 && i % 2 == 0)
                 {
                     ImageTransformBuilder()
-                            .setPos(QPointF(40*(j), 40*i))
+                            .setPos(QPointF(40*j, 40*i))
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/hard1")
                             .addToGameObject(wall);
@@ -95,7 +99,7 @@ void loadScene(GameScene *gameScene) {
                 {
 
                     ImageTransformBuilder()
-                            .setPos(QPointF(40*(j), 40*i))
+                            .setPos(QPointF(40*j, 40*i))
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/hard2")
                             .addToGameObject(wall);
@@ -104,7 +108,7 @@ void loadScene(GameScene *gameScene) {
                 else if(My_map.get_map(i,j) == 2 && j % 2 == 1)
                 {
                     ImageTransformBuilder()
-                            .setPos(QPointF(40*(j), 40*i))
+                            .setPos(QPointF(40*j, 40*i))
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/soft1")
                             .addToGameObject(wall);
@@ -112,7 +116,7 @@ void loadScene(GameScene *gameScene) {
                 else if(My_map.get_map(i,j) == 2 && j % 2 == 0)
                 {
                     ImageTransformBuilder()
-                            .setPos(QPointF(40*(j), 40*i))
+                            .setPos(QPointF(40*j, 40*i))
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/soft2")
                             .addToGameObject(wall);
@@ -157,7 +161,6 @@ void loadScene(GameScene *gameScene) {
   wall->addComponent(new Transform);
   //wall->addComponent(new Hitable);
   gameScene->attachGameObject(wall);
-
   //初始化玩家
     while(1)
     {
@@ -171,11 +174,11 @@ void loadScene(GameScene *gameScene) {
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Player1/p1_live")
                     .addToGameObject(player1);
-        //    player1->addComponent(new Transform);
-            player1->addComponent(new Hitable);
+            player1->addComponent(new Transform);
+            //player1->addComponent(new Hitable);
             player1->addComponent(new Physics());
-            player1->addComponent(new UserController());
-       //     player1->addComponent(new ImageTransform);
+            player1->addComponent(new UserController);
+            player1->addComponent(new ImageTransform);
             gameScene->attachGameObject(player1);
             break;
         }

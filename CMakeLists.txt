@@ -27,6 +27,7 @@ set(PROJECT_SOURCES
         framework/transform.h framework/transform.cpp
         framework/imagetransform.h framework/imagetransform.cpp
         framework/transformbuilder.h framework/transformbuilder.cpp
+        framework/common.h framework/common.cpp
 
         ammo.h ammo.cpp
         health.h health.cpp
@@ -36,7 +37,7 @@ set(PROJECT_SOURCES
         physics.h physics.cpp
         usercontroller.h usercontroller.cpp
         player.h player.cpp
-        map.h map.cpp
+        map.h map.cpp       
         image.qrc
 )
 

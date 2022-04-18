@@ -16,7 +16,7 @@ int map::get_map(int x, int y)
 
 void map::init_Map()
 {
-    //用0表示空地，1表示硬墙，2表示软墙
+    //用0表示空地，1表示硬墙，2表示软墙，3表示其他(中间的装饰)
     const int soft_wall = 52;
     const int hard_wall = 37;
     for(int i = 0; i <= 14; i++)
@@ -54,7 +54,8 @@ void map::init_Map()
     {
         for(int j = 8; j<= 10; j++)
         {
-            Map[i][j] = 0;
+            Map[i][j] = 3;
         }
     }
+    Map[6][10] = 0;
 }

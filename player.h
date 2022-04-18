@@ -10,9 +10,7 @@ class player
 public:
     player();
 private:
-    int speed = 0;
-    int tool_speed = 0;
-    int tool_bomb = 0;
+
 };
 
 #endif // PLAYER_H

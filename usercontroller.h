@@ -16,9 +16,24 @@ void onAttach () override;
 void onUpdate( float deltaTime ) override;
 
 private:
+    int speed;
+    int tool_speed;
+    int tool_bomb;
+    //float vx;
+    //float vy;
+
+private:
     Physics *physics;
     Transform *transform;
     ImageTransform * imageTransform;
+
+public :
+    void set_speed(int s);
+    void set_tool_speed(int t);
+    void set_tool_bomb(int t);
+    int get_tool_speed();
+    int get_tool_bomb();
+    bool judge_walk(float vx, float vy, int dir);
 };
 
 #endif // USERCONTROLLER_H

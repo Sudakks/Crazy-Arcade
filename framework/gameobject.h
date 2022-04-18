@@ -22,6 +22,7 @@ class GameObject final : public QObject {
   T *getComponent() {
     for (auto component : components) {
       auto ptr = dynamic_cast<T *>(component);
+      //dynamic_cast
       if (ptr != nullptr) return ptr;
     }
     return nullptr;
