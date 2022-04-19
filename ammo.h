@@ -12,14 +12,13 @@ class Ammo : public Component {
 
   void onAttach() override;
   void onUpdate(float deltaTime) override;
-  Transform * get_transform();
   void set_collider(QGraphicsItem * co);
 
  protected:
   Transform *transform = nullptr;
   QGraphicsItem *collider = nullptr;
   float range;
-  float timeToLive = 1;//这个是炸弹显示的时间（即等待爆炸的时间）
+  float timeToLive = 2;//这个是炸弹显示的时间（即等待爆炸的时间）
   //QPointF velocity;
 };
 

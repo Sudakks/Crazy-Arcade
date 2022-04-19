@@ -20,9 +20,8 @@ void Ammo::onAttach() {
 }
 
 void Ammo::onUpdate(float deltaTime) {
-  timeToLive -= deltaTime;
-  if (timeToLive < 0) {
-
+    timeToLive--;
+  if (timeToLive <= 0) {
     destory(this->gameObject);
   }
   //this->transform->setPos(this->transform->pos() + velocity * deltaTime);
@@ -37,11 +36,6 @@ void Ammo::onUpdate(float deltaTime) {
     destory(this->gameObject);
     break;
   }
-}
-
-Transform *Ammo::get_transform()
-{
-    return this->transform;
 }
 
 void Ammo::set_collider(QGraphicsItem *co)

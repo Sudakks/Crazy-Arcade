@@ -6,7 +6,8 @@
 #include "transformbuilder.h"
 #include <QGraphicsRectItem>
 #include <imagetransform.h>
-
+#include "map.h"
+#include "common.h"
 
 Shooter::Shooter(float range, float wait_time) : Component() {
     this->range = range;
@@ -25,62 +26,77 @@ void Shooter::onAttach() {
 void Shooter::onUpdate(float deltaTime) {
    wait_time += 1;
    if(wait_time > 180)
-   {
+   {    //QList<GameObject> ammo_list;
         //此时要爆炸了(差不多是3s的时间)
         //新建一个ammo对象
-       float x = this->transform->pos().x();
-       float y = this->transform->pos().y();
-       //应该要加的方向：上（左下角）左（右上角）下（x,y+35,左上角）右（x+35,y,左上角）
+       float x = this->transform->pos().x() / 40;
+       float y = this->transform->pos().y() / 40;
        for(int i = 1; i <= 4; i++)
        {          
+           auto ammo = new GameObject();
+           ammo->addComponent(new Transform);
+           ammo->addComponent(new Ammo(range));
+           auto amm = ammo->getComponent<Ammo>();
                //这时候应该往四个方位新建对象
-               auto ammo = new GameObject();
                if(this->range == 1)
                {
                    if(i == 1)
                    {
-                       ImageTransformBuilder()
-                               .setPos(QPointF(x-20, y+15))
-                               .setImage(":/flash_1/image/Flash/down/down1.png")
-                               .setAlignment(Qt::AlignLeft | Qt::AlignTop)
-                               .addToGameObject(ammo);
+                       //先判断是否能炸
+                       if(My_map.get_map(y + 1, x) != 0 && My_map.get_map(y + 1, x) != 2)
+                       {
+                           continue;
+                       }
+                       auto flash = new QGraphicsPixmapItem(this->transform);
+                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/down/down1.png"));
+                       flash->setPos(0, 0);//这个是以图片的中心点的位置发射
+                       flash->setOffset(-20,20);
+                       Q_ASSERT(flash != nullptr);
+                       amm->set_collider(flash);
                    }
                    else if(i == 2)
                    {
-                       ImageTransformBuilder()
-                               .setPos(QPointF(x-20, y-20))
-                               .setImage(":/flash_1/image/Flash/left/left1.png")
-                               .setAlignment(Qt::AlignRight | Qt::AlignTop)
-                               .addToGameObject(ammo);
+                       if(My_map.get_map(y, x - 1) != 0 && My_map.get_map(y, x - 1) != 2)
+                           continue;
+                       auto flash = new QGraphicsPixmapItem(this->transform);
+                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/left/left1.png"));
+                       flash->setPos(0,0);
+                       flash->setOffset(-60, -20);
+                       Q_ASSERT(flash != nullptr);
+                       amm->set_collider(flash);
                    }
                    else if(i == 3)
                    {
-                       ImageTransformBuilder()
-                               .setPos(QPointF(x + 15, y-20))
-                               .setImage(":/flash_1/image/Flash/right/right1.png")
-                               .setAlignment(Qt::AlignLeft | Qt::AlignTop)
-                               .addToGameObject(ammo);
+                       if(My_map.get_map(y, x + 1) != 0 && My_map.get_map(y, x + 1) != 2)
+                           continue;
+                       auto flash = new QGraphicsPixmapItem(this->transform);
+                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/right/right1.png"));
+                       flash->setPos(0,0);
+                       flash->setOffset(20, -20);
+                       Q_ASSERT(flash != nullptr);
+                       amm->set_collider(flash);
                    }
                    else
                    {
-                       ImageTransformBuilder()
-                               .setPos(QPointF(x-20, y-20))
-                               .setImage(":/flash_1/image/Flash/up/up1.png")
-                               .setAlignment(Qt::AlignLeft | Qt::AlignBottom)
-                               .addToGameObject(ammo);
+                       if(My_map.get_map(y - 1, x) != 0 && My_map.get_map(y - 1, x) != 2)
+                           continue;
+                       auto flash = new QGraphicsPixmapItem(this->transform);
+                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/up/up1.png"));
+                       flash->setPos(0,0);
+                       flash->setOffset(-20, -60);
+                       Q_ASSERT(flash != nullptr);
+                       amm->set_collider(flash);
                    }
+                          attachGameObject(ammo);
                }
-               ammo->addComponent(new Transform);
-               ammo->addComponent(new Ammo(range));
-               auto am = ammo->getComponent<Ammo>();
-               auto circle = new QGraphicsEllipseItem(am->get_transform());
-               am->set_collider(circle);
-               //auto:系统自己会帮助我们给出变量的声明
-               /*circle->setRect(QRectF(-10, -10, 20, 20));
-               circle->setBrush(QBrush(Qt::black));
-               this->collider = circle;*/
-               this->attachGameObject(ammo);
+               else
+               {
+                   //这个是威力加倍后的场景
+               }
+
        }
+
+
    }
    else
    {
