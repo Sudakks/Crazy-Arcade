@@ -1,5 +1,5 @@
 #include "component.h"
-
+#include "QDebug"
 #include "gameobject.h"
 
 Component::Component() : QObject() {}

@@ -3,5 +3,4 @@
 #include "map.h"
 
 extern map My_map;
-
 #endif // COMMON_H

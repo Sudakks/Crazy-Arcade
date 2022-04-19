@@ -22,7 +22,7 @@
 
 map My_map;
 void loadScene(GameScene *gameScene) {
- /* auto shooter = new GameObject();
+ /*auto shooter = new GameObject();
   //这个是用来绘图的
   ImageTransformBuilder()
       .setPos(QPointF(100, 100))
@@ -63,7 +63,6 @@ void loadScene(GameScene *gameScene) {
               .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side1")
               .addToGameObject(wall);
       wall->addComponent(new Transform);
-      //wall->addComponent(new Hitable);
       gameScene->attachGameObject(wall);
   }
   //左侧的围栏
@@ -76,7 +75,6 @@ void loadScene(GameScene *gameScene) {
               .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side11")
               .addToGameObject(wall);
       wall->addComponent(new Transform);
-     // wall->addComponent(new Hitable);
       gameScene->attachGameObject(wall);
   }
   for(int i = 1; i < 14; i++)
@@ -92,8 +90,7 @@ void loadScene(GameScene *gameScene) {
                             .setPos(QPointF(40*j, 40*i))
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/hard1")
-                            .addToGameObject(wall);
-                     wall->addComponent(new Hitable);
+                            .addToGameObject(wall);                     
                 }
                 else if(My_map.get_map(i,j) == 1 && i % 2 == 1)
                 {
@@ -103,7 +100,6 @@ void loadScene(GameScene *gameScene) {
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/hard2")
                             .addToGameObject(wall);
-                      wall->addComponent(new Hitable);
                 }
                 else if(My_map.get_map(i,j) == 2 && j % 2 == 1)
                 {
@@ -112,6 +108,7 @@ void loadScene(GameScene *gameScene) {
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/soft1")
                             .addToGameObject(wall);
+                    wall->addComponent(new Hitable);
                 }
                 else if(My_map.get_map(i,j) == 2 && j % 2 == 0)
                 {
@@ -120,6 +117,7 @@ void loadScene(GameScene *gameScene) {
                             .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                             .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/soft2")
                             .addToGameObject(wall);
+                    wall->addComponent(new Hitable);
                 }
                 wall->addComponent(new Transform);
                 gameScene->attachGameObject(wall);
@@ -135,7 +133,6 @@ void loadScene(GameScene *gameScene) {
                   .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side2")
                   .addToGameObject(wall);
           wall->addComponent(new Transform);
-         // wall->addComponent(new Hitable);
           gameScene->attachGameObject(wall);
       }
       //右边的围栏
@@ -148,7 +145,6 @@ void loadScene(GameScene *gameScene) {
                   .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side22")
                   .addToGameObject(wall);
           wall->addComponent(new Transform);
-          //wall->addComponent(new Hitable);
           gameScene->attachGameObject(wall);
       }
   }
@@ -159,14 +155,13 @@ void loadScene(GameScene *gameScene) {
           .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/other")
           .addToGameObject(wall);
   wall->addComponent(new Transform);
-  //wall->addComponent(new Hitable);
   gameScene->attachGameObject(wall);
   //初始化玩家
     while(1)
     {
-        quint32 x = (QRandomGenerator::global()->generate()) % 14;
-        quint32 y = (QRandomGenerator::global()->generate()) % 20;
-        if(!My_map.get_map(x, y))
+        quint32 x = (QRandomGenerator::global()->generate()) % 14 + 1;
+        quint32 y = (QRandomGenerator::global()->generate()) % 20 + 1;
+        if(!My_map.get_map(x, y) && (!My_map.get_map(x-1,y) || !My_map.get_map(x+1, y) || !My_map.get_map(x, y-1) || !My_map.get_map(x, y+1)))
         {
             auto player1 = new GameObject();
             ImageTransformBuilder()
@@ -177,9 +172,13 @@ void loadScene(GameScene *gameScene) {
             player1->addComponent(new Transform);
             //player1->addComponent(new Hitable);
             player1->addComponent(new Physics());
-            player1->addComponent(new UserController);
+            player1->addComponent(new UserController(1, 1));//玩家的相关数据的初始化
             player1->addComponent(new ImageTransform);
             gameScene->attachGameObject(player1);
+            auto user = player1->getComponent<UserController>();
+            user->set_speed(1);//设置初始的速度
+            user->set_tool_bomb(0);
+            user->set_tool_speed(0);//初始时的道具时间都为0
             break;
         }
     }

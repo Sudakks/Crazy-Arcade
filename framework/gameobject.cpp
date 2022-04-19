@@ -1,5 +1,5 @@
 #include "gameobject.h"
-
+#include "QDebug"
 #include "component.h"
 #include "gamescene.h"
 #include "transform.h"

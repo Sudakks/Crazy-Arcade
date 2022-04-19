@@ -23,6 +23,8 @@ class GameObject final : public QObject {
     for (auto component : components) {
       auto ptr = dynamic_cast<T *>(component);
       //dynamic_cast
+      //表达式dynamic_cast<T*>(a) 将a值转换为类型为T的对象指针
+      //如果类型T不是a的某个基类(父类)型，该操作将返回一个空指针
       if (ptr != nullptr) return ptr;
     }
     return nullptr;
