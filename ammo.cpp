@@ -2,7 +2,6 @@
 #include <QDebug>
 #include <QBrush>
 #include <QGraphicsEllipseItem>
-
 #include "hitable.h"
 
 Ammo::Ammo(float range) : Component(){

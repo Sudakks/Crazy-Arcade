@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-
 #include <gameobject.h>
 #include <imagetransform.h>
 #include <shooter.h>
@@ -20,7 +19,6 @@
 #include "imagetransform.h"
 #include "common.h"
 
-map My_map;
 void loadScene(GameScene *gameScene) {
  /*auto shooter = new GameObject();
   //这个是用来绘图的
@@ -172,13 +170,13 @@ void loadScene(GameScene *gameScene) {
             player1->addComponent(new Transform);
             //player1->addComponent(new Hitable);
             player1->addComponent(new Physics());
-            player1->addComponent(new UserController(1, 1));//玩家的相关数据的初始化
+            player1->addComponent(new UserController(1, 1, 1));//玩家的相关数据的初始化
             player1->addComponent(new ImageTransform);
             gameScene->attachGameObject(player1);
             auto user = player1->getComponent<UserController>();
-            user->set_speed(1);//设置初始的速度
-            user->set_tool_bomb(0);
-            user->set_tool_speed(0);//初始时的道具时间都为0
+            user->set_tool_speed(0);//设置初始的速度
+            user->set_tool_range(0);
+            user->set_tool_bomb_num(0);//初始时的道具时间都为0
             break;
         }
     }
@@ -197,7 +195,7 @@ MainWindow::MainWindow(QWidget *parent)
   //添加地砖的图片
   QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/dizhuan.png"));
   //pixmapItem->setOffset(QPoint(100,200));//,,,调整位置
-  gameScene->addItem(pixmapItem);
+  gameScene->addItem(pixmapItem);  
   loadScene(gameScene);
 }
 

@@ -8,10 +8,14 @@
 #include <imagetransform.h>
 #include "map.h"
 #include "common.h"
+#include <QList>
+#include <QRandomGenerator>
 
-Shooter::Shooter(float range, float wait_time) : Component() {
+Shooter::Shooter(float range, float wait_time, Transform* userTransform) : Component() {
     this->range = range;
     this->wait_time = wait_time;
+    this->userTransform = userTransform;//这个获取到了放炸弹的人的transform
+    //所以我可以把道具的图片放到这个transform上面
 }
 
 void Shooter::onAttach() {
@@ -19,18 +23,18 @@ void Shooter::onAttach() {
     Q_ASSERT(this->transform != nullptr);
     this->imageTransform = this->gameObject->getComponent<ImageTransform>();
     Q_ASSERT(this->imageTransform != nullptr);
-    /*auto rect = new QGraphicsRectItem(this->transform);
-    rect->setRect(QRectF(-30, -30, 60, 60));*/
 }
 
 void Shooter::onUpdate(float deltaTime) {
    wait_time += 1;
-   if(wait_time > 180)
-   {    //QList<GameObject> ammo_list;
-        //此时要爆炸了(差不多是3s的时间)
-        //新建一个ammo对象
+   if(wait_time == 180)
+   {
+       //此时要爆炸了(差不多是3s的时间)
+       //新建一个ammo对象
+       //随机数生成道具
        float x = this->transform->pos().x() / 40;
        float y = this->transform->pos().y() / 40;
+
        for(int i = 1; i <= 4; i++)
        {          
            auto ammo = new GameObject();
@@ -48,52 +52,73 @@ void Shooter::onUpdate(float deltaTime) {
                            continue;
                        }
                        auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/down/down1.png"));
+                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
                        flash->setPos(0, 0);//这个是以图片的中心点的位置发射
                        flash->setOffset(-20,20);
                        Q_ASSERT(flash != nullptr);
                        amm->set_collider(flash);
+                       if(My_map.get_map(y + 1, x) == 2)
+                       {
+                           score += soft_score;//得分准备
+                           //说明是软墙，此时要进行准备摆放道具图片，并更改二维数组的内容
+                            change_map(y + 1, x);
+                       }
                    }
                    else if(i == 2)
                    {
                        if(My_map.get_map(y, x - 1) != 0 && My_map.get_map(y, x - 1) != 2)
                            continue;
                        auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/left/left1.png"));
+                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
                        flash->setPos(0,0);
                        flash->setOffset(-60, -20);
                        Q_ASSERT(flash != nullptr);
                        amm->set_collider(flash);
+                       if(My_map.get_map(y, x - 1) == 2)
+                       {
+                           score += soft_score;
+                           change_map(y, x - 1);
+                       }
                    }
                    else if(i == 3)
                    {
                        if(My_map.get_map(y, x + 1) != 0 && My_map.get_map(y, x + 1) != 2)
                            continue;
                        auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/right/right1.png"));
+                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
                        flash->setPos(0,0);
                        flash->setOffset(20, -20);
                        Q_ASSERT(flash != nullptr);
                        amm->set_collider(flash);
+                       if(My_map.get_map(y, x + 1) == 2)
+                       {
+                           change_map(y, x + 1);
+                           score += soft_score;
+                       }
                    }
                    else
                    {
                        if(My_map.get_map(y - 1, x) != 0 && My_map.get_map(y - 1, x) != 2)
                            continue;
                        auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash_1/image/Flash/up/up1.png"));
+                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
                        flash->setPos(0,0);
                        flash->setOffset(-20, -60);
                        Q_ASSERT(flash != nullptr);
                        amm->set_collider(flash);
+                       if(My_map.get_map(y - 1, x) == 2)
+                       {
+                             change_map(y - 1, x);
+                             score += soft_score;
+                       }
                    }
-                          attachGameObject(ammo);
+                        attachGameObject(ammo);
                }
                else
                {
                    //这个是威力加倍后的场景
+                   qDebug() << "威力加倍，没有图片";
                }
-
        }
 
 
@@ -101,8 +126,8 @@ void Shooter::onUpdate(float deltaTime) {
    else
    {
        //切换动画
-       if(range == 1)
-       {
+       //if(range == 1)
+       //{
            if(wait_time == 15 || wait_time == 60 || wait_time == 105|| wait_time == 150 || wait_time == 195)
            {
                imageTransform->setImage(":/bomb1/image/Bomb1/2.png");
@@ -115,8 +140,8 @@ void Shooter::onUpdate(float deltaTime) {
            {
                imageTransform->setImage(":/bomb1/image/Bomb1/1.png");
            }
-       }
-       else
+       //}
+       /*else
        {
            if(wait_time == 20 || wait_time == 80 || wait_time == 140)
            {
@@ -130,7 +155,7 @@ void Shooter::onUpdate(float deltaTime) {
            {
                imageTransform->setImage(":/bomb1/image/Bomb1/11.png");
            }
-       }       
+       }  */
    }
   /*cooldown -= deltaTime;
   if (cooldown > 0) return;
@@ -170,4 +195,72 @@ void Shooter::set_range(int r)
 float Shooter::get_range()
 {
     return this->range;
+}
+
+int Shooter::get_score()
+{
+    return this->score;
+}
+
+int Shooter::random_tool()
+{
+    quint32 pr = (QRandomGenerator::global()->generate()) % 5;
+    return -pr;
+}
+
+void Shooter::change_map(int x, int y)
+{
+    int random =  random_tool();
+    if(random == speed_tool || random == range_tool || random == bomb_num_tool)
+    {
+        //新建一个gameObject然后把它挂到玩家的transform上面
+        //或者是自己就是一个gameObject，然后自己也有transform，放进list里面，玩家捡到了就detach掉
+        auto tool = new GameObject();
+        if(random == speed_tool)
+        {
+            //获得加速道具
+            //设置图片
+            ImageTransformBuilder()
+                    .setPos(QPointF(40 * y, 40 * x))
+                    .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                    .setImage(":/tool/image/Tool/speed.png")
+                    .addToGameObject(tool);
+            //qDebug() << "1";
+            My_map.set_map(x, y, speed_tool);
+            qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+        }
+        else if(random == range_tool)
+        {
+            //获得炸弹威力增加道具
+            ImageTransformBuilder()
+                    .setPos(QPointF(40 * y, 40 * x))
+                    .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                    .setImage(":/tool/image/Tool/range.png")
+                    .addToGameObject(tool);
+            qDebug() << "2";
+            My_map.set_map(x, y, range_tool);
+            qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+        }
+        else
+        {
+            //获得炸弹拥有个数增加的道具
+            ImageTransformBuilder()
+                    .setPos(QPointF(40 * y, 40 * x))
+                    .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                    .setImage(":/tool/image/Tool/num.png")
+                    .addToGameObject(tool);
+            //qDebug() << "3";
+            My_map.set_map(x, y, bomb_num_tool);
+            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+        }
+        attachGameObject(tool);
+        tool->addComponent(new Transform);
+        tool->addComponent(new ImageTransform);
+        tool_list.emplace_back(tool);//并且把它加到道具队列中
+    }
+    else
+    {
+        My_map.set_map(x, y, 0);//如果没有抽到道具，还是相当于炸开
+    }
+
 }

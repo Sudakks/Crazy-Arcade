@@ -8,7 +8,8 @@
         <file>image/Bomb1/33.png</file>
     </qresource>
     <qresource prefix="/tool">
-        <file>image/Tool/bombs.png</file>
+        <file>image/Tool/num.png</file>
+        <file>image/Tool/range.png</file>
         <file>image/Tool/speed.png</file>
     </qresource>
     <qresource prefix="/map">
@@ -78,5 +79,10 @@
         <file>image/Flash/left/left2.png</file>
         <file>image/Flash/right/right2.png</file>
         <file>image/Flash/up/up2.png</file>
+    </qresource>
+    <qresource prefix="/flash">
+        <file>image/Flash/1.png</file>
+        <file>image/Flash/2.png</file>
+        <file>image/Flash/3.png</file>
     </qresource>
 </RCC>

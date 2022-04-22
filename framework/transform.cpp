@@ -2,9 +2,7 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
-
 #include "gameobject.h"
-
 Transform::Transform() {}
 Transform::Transform(const QPointF &pos) { this->setPos(pos); }
 
