@@ -58,6 +58,7 @@ void map::init_Map()
         }
     }
     Map[6][10] = 0;
+
 }
 
 void map::set_map(int x, int y, int content)

@@ -20,35 +20,6 @@
 #include "common.h"
 
 void loadScene(GameScene *gameScene) {
- /*auto shooter = new GameObject();
-  //这个是用来绘图的
-  ImageTransformBuilder()
-      .setPos(QPointF(100, 100))
-      //.setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/soft1")
-      .setAlignment(Qt::AlignCenter)
-      .addToGameObject(shooter);
-  shooter->addComponent(new Shooter);
-  gameScene->attachGameObject(shooter);
-  auto summonDummyBtn = new GameObject();
-  summonDummyBtn->addComponent(new Transform);
-  summonDummyBtn->addComponent(new SummonDummy);
-  gameScene->attachGameObject(summonDummyBtn);
-*/
-
-  /*
-  //
-  auto obj = new GameObject();
-  auto transform = new Transform();
-  auto circle = new QGraphicsEllipseItem (transform);
-  circle->setRect(-5, -5, 10 , 10);//这应该是circle所在的区域，然后挂载到了transform下面
-  transform->setPos(100 , 100);
-  obj->addComponent(transform);
-  obj->addComponent(new Physics());
-  obj->addComponent(new UserController());
-  //属性都好了，再加到scene里面
-  gameScene->attachGameObject(obj);
-*/
-
   //加载地图图片
   My_map.init_Map();
   //上面的围栏
@@ -60,7 +31,6 @@ void loadScene(GameScene *gameScene) {
               .setAlignment(Qt::AlignLeft | Qt::AlignTop)
               .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side1")
               .addToGameObject(wall);
-      wall->addComponent(new Transform);
       gameScene->attachGameObject(wall);
   }
   //左侧的围栏
@@ -72,7 +42,6 @@ void loadScene(GameScene *gameScene) {
               .setAlignment(Qt::AlignLeft | Qt::AlignTop)
               .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side11")
               .addToGameObject(wall);
-      wall->addComponent(new Transform);
       gameScene->attachGameObject(wall);
   }
   for(int i = 1; i < 14; i++)
@@ -117,7 +86,6 @@ void loadScene(GameScene *gameScene) {
                             .addToGameObject(wall);
                     wall->addComponent(new Hitable);
                 }
-                wall->addComponent(new Transform);
                 gameScene->attachGameObject(wall);
             }
       }
@@ -130,7 +98,6 @@ void loadScene(GameScene *gameScene) {
                   .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                   .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side2")
                   .addToGameObject(wall);
-          wall->addComponent(new Transform);
           gameScene->attachGameObject(wall);
       }
       //右边的围栏
@@ -142,7 +109,6 @@ void loadScene(GameScene *gameScene) {
                   .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                   .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/side22")
                   .addToGameObject(wall);
-          wall->addComponent(new Transform);
           gameScene->attachGameObject(wall);
       }
   }
@@ -152,10 +118,9 @@ void loadScene(GameScene *gameScene) {
           .setAlignment(Qt::AlignLeft | Qt::AlignTop)
           .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/other")
           .addToGameObject(wall);
-  wall->addComponent(new Transform);
   gameScene->attachGameObject(wall);
   //初始化玩家
-    while(1)
+    /*while(1)
     {
         quint32 x = (QRandomGenerator::global()->generate()) % 14 + 1;
         quint32 y = (QRandomGenerator::global()->generate()) % 20 + 1;
@@ -167,10 +132,9 @@ void loadScene(GameScene *gameScene) {
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Player1/p1_live")
                     .addToGameObject(player1);
-            player1->addComponent(new Transform);
             //player1->addComponent(new Hitable);
             player1->addComponent(new Physics());
-            player1->addComponent(new UserController(1, 1, 1));//玩家的相关数据的初始化
+            player1->addComponent(new UserController(1, 1, 1, Qt::Key_W, Qt::Key_S, Qt::Key_A, Qt::Key_D, Qt::Key_Space));//玩家的相关数据的初始化
             player1->addComponent(new ImageTransform);
             gameScene->attachGameObject(player1);
             auto user = player1->getComponent<UserController>();
@@ -179,6 +143,15 @@ void loadScene(GameScene *gameScene) {
             user->set_tool_bomb_num(0);//初始时的道具时间都为0
             break;
         }
+    }*/
+
+    for(int i = 0; i < 15; i++)
+    {
+        for(int j = 0; j < 20; j++)
+        {
+            printf("%d ", My_map.get_map(i, j));
+        }
+        printf("\n");
     }
 }
 
@@ -195,9 +168,56 @@ MainWindow::MainWindow(QWidget *parent)
   //添加地砖的图片
   QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/dizhuan.png"));
   //pixmapItem->setOffset(QPoint(100,200));//,,,调整位置
-  gameScene->addItem(pixmapItem);  
+  gameScene->addItem(pixmapItem);
+
   loadScene(gameScene);
+  //初始化player1
+  QString str1(":/player1/image/Player1/p1_live.png");
+  QByteArray cpath1 = str1.toLocal8Bit();
+  char*path1 = cpath1.data();//这一步是把QString转为char*类型
+  init_player(path1, Qt::Key_W, Qt::Key_S, Qt::Key_A, Qt::Key_D, Qt::Key_Space,
+                  ":/player1/image/Player1/p1_up.png",
+                  ":/player1/image/Player1/p1_down.png",
+                  ":/player1/image/Player1/p1_left.png",
+                  ":/player1/image/Player1/p1_right.png");
+
+  //初始化player2
+  QString str2(":/player2/image/Player2/p2_live.png");
+  QByteArray cpath2 = str2.toLocal8Bit();
+  char*path2 = cpath2.data();
+  init_player(path2, Qt::Key_Up, Qt::Key_Down, Qt::Key_Left, Qt::Key_Right, Qt::Key_Return,
+                  ":/player2/image/Player2/p2_up.png",
+                  ":/player2/image/Player2/p2_down.png",
+                  ":/player2/image/Player2/p2_left.png",
+                  ":/player2/image/Player2/p2_right.png");
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
+void MainWindow::init_player(char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right)
+{
+    while(1)
+    {
+        quint32 x = (QRandomGenerator::global()->generate()) % 14;
+        quint32 y = (QRandomGenerator::global()->generate()) % 20;
+        if(My_map.get_map(x, y) == 0 && (!My_map.get_map(x - 1, y) || !My_map.get_map(x + 1, y) || !My_map.get_map(x, y - 1) || !My_map.get_map(x, y + 1)))
+        {
+            auto player = new GameObject();
+            ImageTransformBuilder()
+                    .setPos(QPointF(40*y,40*x))
+                    .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                    .setImage(photo)
+                    .addToGameObject(player);
+            //player->addComponent(new Hitable);
+            player->addComponent(new Physics());
+            player->addComponent(new UserController(1, 1, 1, key_up, key_down, key_left, key_right, key_bomb, up, down, left, right));//玩家的相关数据的初始化
+            player->addComponent(new ImageTransform);
+            gameScene->attachGameObject(player);
+            auto user = player->getComponent<UserController>();
+            user->set_tool_speed(0);//设置初始的速度
+            user->set_tool_range(0);
+            user->set_tool_bomb_num(0);//初始时的道具时间都为0
+            break;
+        }
+    }
+}

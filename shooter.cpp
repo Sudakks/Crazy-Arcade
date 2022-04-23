@@ -87,8 +87,6 @@ void Shooter::onUpdate(float deltaTime) {
    else
    {
        //切换动画
-       //if(range == 1)
-       //{
            if(wait_time == 15 || wait_time == 60 || wait_time == 105|| wait_time == 150 || wait_time == 195)
            {
                imageTransform->setImage(":/bomb1/image/Bomb1/2.png");
@@ -187,7 +185,6 @@ void Shooter::change_map(int x, int y)
         attachGameObject(tool);
         tool->addComponent(new Transform);
         tool->addComponent(new ImageTransform);
-        auto tr = tool->getComponent<Transform>();
         tool_list.emplace_back(tool);//并且把它加到道具队列中
     }
     else

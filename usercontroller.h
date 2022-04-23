@@ -10,7 +10,7 @@
 class UserController : public Component
 {
 public:
-    UserController (int speed, float range, int bomb_num);
+    UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right);
     //对应到泡泡堂游戏中，你可以将上下左右移动的四个键值通过构造函数传入，即可以利用其来操作两个玩家
 
 void onAttach () override;
@@ -25,6 +25,18 @@ private:
     float tool_range = 0;
     int score = 0;
     float limit = -1;//用来控制按下空格键多久才能继续按下(先设置为1.5s)
+    //利用构造函数，分别表示两个玩家
+    Qt::Key key_up;
+    Qt::Key key_down;
+    Qt::Key key_left;
+    Qt::Key key_right;
+    Qt::Key key_bomb;
+
+    QString up_image;
+    QString down_image;
+    QString left_image;
+    QString right_image;
+
 
 private:
     Physics *physics;

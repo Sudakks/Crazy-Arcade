@@ -12,10 +12,22 @@
 #include "ammo.h"
 #include "gameobject.h"
 
-UserController::UserController (int speed, float range, int bomb_num) {
+UserController::UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right)
+{
     this->speed = speed;
     this->range = range;
     this->bomb_num = bomb_num;
+
+    this->key_up = key_up;
+    this->key_down = key_down;
+    this->key_left = key_left;
+    this->key_right = key_right;
+    this->key_bomb = key_bomb;
+
+    this->up_image = up;
+    this->down_image = down;
+    this->left_image = left;
+    this->right_image = right;
 }
 
 void UserController::onAttach () {
@@ -61,8 +73,9 @@ void UserController::onUpdate( float deltaTime ) {
             }
         }
     }
-    if(getKey(Qt::Key_Space) && bomb_num > 0 && limit <= 0)
+    if(getKey(key_bomb) && bomb_num > 0 && limit <= 0)
     {
+        qDebug() << "yes";
         limit = deltaTime * 60;
         //因为一次按键它会读入很多下，所以限制按键的读入(即隔多少秒之后才能继续读入)
         float x = this->transform->pos().x();
@@ -70,7 +83,7 @@ void UserController::onUpdate( float deltaTime ) {
         //此时新建一个炸弹的对象
         auto shooter = new GameObject();
         bomb_num--;
-        qDebug() << "现在的炸弹数量为" << bomb_num;
+        //qDebug() << "现在的炸弹数量为" << bomb_num;
         bomb_list.emplace_back(shooter);
         //表示按下了空格键,此时要新建一个炸弹进行处理
         ImageTransformBuilder()
@@ -87,29 +100,33 @@ void UserController::onUpdate( float deltaTime ) {
     }
     else
     {
-        if (getKey(Qt::Key_A) )
+        if (getKey(key_left) )
         {
-           imageTransform->setImage(":/player1/image/Player1/p1_left.png");
+           imageTransform->setImage(left_image);
            if(judge_walk(-35 * speed, 0, 1))
                vx -= 35 * speed;
+           qDebug() << "vxA = " << vx;
         }
-        if (getKey(Qt::Key_D) )
+        if (getKey(key_right) )
         {
-            imageTransform->setImage(":/player1/image/Player1/p1_right.png");
+            imageTransform->setImage(right_image);
             if(judge_walk(35 * speed, 0, 2))
                 vx += 35 * speed;
+            qDebug() << "vxD = " << vx;
         }
-        if (getKey(Qt::Key_W) )
+        if (getKey(key_up) )
         {
-            imageTransform->setImage(":/player1/image/Player1/p1_up.png");
+            imageTransform->setImage(up_image);
             if(judge_walk(0, -35 * speed, 3))
                 vy -= 35 * speed;
+            qDebug() << "vyW = " << vy;
         }
-        if (getKey(Qt::Key_S) )
+        if (getKey(key_down) )
         {
-            imageTransform->setImage(":/player1/image/Player1/p1_down.png");
+            imageTransform->setImage(down_image);
             if(judge_walk(0, 35 * speed, 4))
                 vy += 35 * speed;
+            qDebug() << "vyS = " << vy;
         }
             physics->setVelocity(vx, vy);
     }
@@ -137,7 +154,7 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     const float wall_h = 40;
     const float wall_w = 40;
     const float offset = 20;
-    const float offset1 = 37;
+    const float offset1 = 35;
     const float offset2 = 10;
     //
     float left_x = this->transform->pos().x();
@@ -184,17 +201,16 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     {
         //up
         y = up_y;
-        if(My_map.get_map(y / wall_h, (left_x + offset2) / wall_w) >= 1 || My_map.get_map(y / wall_h, (right_x - offset2) / wall_w) >= 1)
+        qDebug() << "1所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w);
+        qDebug() << "2所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w);
+        if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
             return false;
         else
-        {
-            qDebug() << "1所在的位置为" << y / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (left_x + offset2) / wall_w);
-            qDebug() << "2所在的位置为" << y / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (right_x - offset2) / wall_w);
-            judge_tool(y / wall_h, (left_x + offset2) / wall_w);
-            judge_tool(y / wall_h, (right_x - offset2) / wall_w);
+        {           
+            judge_tool((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w));
+            judge_tool((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w));
             return true;
         }
-
     }
     else
     {
@@ -202,12 +218,12 @@ bool UserController::judge_walk(float vx, float vy, int dir)
         y = down_y;
         qDebug() << "1所在的位置为" << y / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (left_x + offset2) / wall_w);
         qDebug() << "2所在的位置为" << y / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (right_x - offset2) / wall_w);
-        if(My_map.get_map(y / wall_h, (left_x + offset2) / wall_w) >= 1 || My_map.get_map(y / wall_h, (right_x - offset2) / wall_w) >= 1)
+        if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
             return false;
         else
         {
-            judge_tool(y / wall_h, (left_x + offset2) / wall_w);
-            judge_tool(y / wall_h, (right_x - offset2) / wall_w);
+            judge_tool((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w));
+            judge_tool((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w));
             return true;
         }
     }
@@ -223,7 +239,7 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     }
     else
     {
-        judge_tool(mapX, mapY);
+        judge_tool(mapY, mapX);
         return true;
     }
 
@@ -244,7 +260,7 @@ void UserController::add_score(int s)
 void UserController::judge_tool(int x, int y)
 {
     int now = My_map.get_map(x, y);
-    //qDebug() << x << "  "<< y;
+    qDebug() << x << "  "<< y;
     if(now == speed_tool || now == bomb_num_tool || now == range_tool)
     {
         //利用队列查找位置

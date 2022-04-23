@@ -36,7 +36,7 @@ set(PROJECT_SOURCES
         summondummy.h summondummy.cpp
         physics.h physics.cpp
         usercontroller.h usercontroller.cpp
-        map.h map.cpp       
+        map.h map.cpp
         image.qrc
 )
 
