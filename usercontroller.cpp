@@ -11,7 +11,7 @@
 #include "component.h"
 #include "ammo.h"
 #include "gameobject.h"
-#include <QMovie>
+
 UserController::UserController (int speed, float range, int bomb_num) {
     this->speed = speed;
     this->range = range;
@@ -29,7 +29,21 @@ void UserController::onAttach () {
 }
 
 void UserController::onUpdate( float deltaTime ) {
+    if(tool_speed > 0)
+        tool_speed -= deltaTime;
+    if(tool_bomb_num > 0)
+        tool_bomb_num -= deltaTime;
+    if(tool_range > 0)
+        tool_range -= deltaTime;
+    if(tool_speed <= 0 && speed > 1)
+        speed -= 1;
+    if(tool_bomb_num <= 0 && bomb_num > 1)
+        bomb_num -= 1;
+    if(tool_range <= 0 && range > 1)
+        range -= 1;
     float vx = 0 , vy = 0;
+    if(limit > 0)
+        limit -= deltaTime;
     if(bomb_list.size())
     {
         //表示有炸弹需要处理
@@ -47,8 +61,10 @@ void UserController::onUpdate( float deltaTime ) {
             }
         }
     }
-    if(getKey(Qt::Key_Space) && bomb_num > 0)
+    if(getKey(Qt::Key_Space) && bomb_num > 0 && limit <= 0)
     {
+        limit = deltaTime * 60;
+        //因为一次按键它会读入很多下，所以限制按键的读入(即隔多少秒之后才能继续读入)
         float x = this->transform->pos().x();
         float y = this->transform->pos().y();
         //此时新建一个炸弹的对象
@@ -65,7 +81,7 @@ void UserController::onUpdate( float deltaTime ) {
         shooter->addComponent(new Component);
         shooter->addComponent(new ImageTransform);
         shooter->addComponent(new Transform);
-        shooter->addComponent(new Shooter(range, 0, transform));//这个是调用userController的数据
+        shooter->addComponent(new Shooter(this->range, 0, transform));//这个是调用userController的数据
         this->attachGameObject(shooter);
         //这一步相当于把shoooter放到了gameScene上面
     }
@@ -172,6 +188,8 @@ bool UserController::judge_walk(float vx, float vy, int dir)
             return false;
         else
         {
+            qDebug() << "1所在的位置为" << y / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (left_x + offset2) / wall_w);
+            qDebug() << "2所在的位置为" << y / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (right_x - offset2) / wall_w);
             judge_tool(y / wall_h, (left_x + offset2) / wall_w);
             judge_tool(y / wall_h, (right_x - offset2) / wall_w);
             return true;
@@ -182,6 +200,8 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     {
         //down
         y = down_y;
+        qDebug() << "1所在的位置为" << y / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (left_x + offset2) / wall_w);
+        qDebug() << "2所在的位置为" << y / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (right_x - offset2) / wall_w);
         if(My_map.get_map(y / wall_h, (left_x + offset2) / wall_w) >= 1 || My_map.get_map(y / wall_h, (right_x - offset2) / wall_w) >= 1)
             return false;
         else
@@ -196,6 +216,7 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     int mapX = nowX / wall_w;
     int mapY = nowY / wall_h;
     //
+    qDebug() << "现在所在坐标为(" << mapY  << ',' << mapX << ")" << "， 内容为 " << My_map.get_map(mapY, mapX);
     if(My_map.get_map(mapY, mapX) >= 1)
     {
         return false;
@@ -233,7 +254,7 @@ void UserController::judge_tool(int x, int y)
         {
             GameObject* tool = tool_list.at(i);
             Transform* pos = tool->getComponent<Transform>();
-            //qDebug() << "道具的位置是" << pos->pos().x() / 40 << "  "<< pos->pos().y() / 40;
+            qDebug() << "道具的位置是" << pos->pos().y() / 40 << "  "<< pos->pos().x() / 40;
             if(pos->pos().x() / 40 == y && pos->pos().y() / 40 == x)
             {
                 //说明找到了这一个道具
@@ -248,16 +269,19 @@ void UserController::judge_tool(int x, int y)
         {
             //qDebug() << "-1";
             speed += 1;
+            tool_speed += 8;
         }
         else if(now == bomb_num_tool)
         {
             //qDebug() << "-2";
             bomb_num += 1;
+            tool_bomb_num += 8;
             qDebug() << "加完道具后的炸弹数量为" << bomb_num;
         }
         else if(now == range_tool)
         {
             //qDebug() << "-3";
+            tool_range += 8;
             range += 1;
         }
     }

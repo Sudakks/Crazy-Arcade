@@ -20,10 +20,11 @@ private:
     int speed;
     int range;//这个表示炸弹的范围
     int bomb_num = 1;
-    int tool_speed = 0;
-    int tool_bomb_num = 0;//道具的时限
-    int tool_range = 0;
+    float tool_speed = 0;
+    float tool_bomb_num = 0;//道具的时限
+    float tool_range = 0;
     int score = 0;
+    float limit = -1;//用来控制按下空格键多久才能继续按下(先设置为1.5s)
 
 private:
     Physics *physics;

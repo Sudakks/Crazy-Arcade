@@ -34,94 +34,55 @@ void Shooter::onUpdate(float deltaTime) {
        //随机数生成道具
        float x = this->transform->pos().x() / 40;
        float y = this->transform->pos().y() / 40;
-
-       for(int i = 1; i <= 4; i++)
-       {          
-           auto ammo = new GameObject();
-           ammo->addComponent(new Transform);
-           ammo->addComponent(new Ammo(range));
-           auto amm = ammo->getComponent<Ammo>();
-               //这时候应该往四个方位新建对象
-               if(this->range == 1)
-               {
-                   if(i == 1)
-                   {
-                       //先判断是否能炸
-                       if(My_map.get_map(y + 1, x) != 0 && My_map.get_map(y + 1, x) != 2)
-                       {
-                           continue;
-                       }
-                       auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
-                       flash->setPos(0, 0);//这个是以图片的中心点的位置发射
-                       flash->setOffset(-20,20);
-                       Q_ASSERT(flash != nullptr);
-                       amm->set_collider(flash);
-                       if(My_map.get_map(y + 1, x) == 2)
-                       {
-                           score += soft_score;//得分准备
-                           //说明是软墙，此时要进行准备摆放道具图片，并更改二维数组的内容
-                            change_map(y + 1, x);
-                       }
-                   }
-                   else if(i == 2)
-                   {
-                       if(My_map.get_map(y, x - 1) != 0 && My_map.get_map(y, x - 1) != 2)
-                           continue;
-                       auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
-                       flash->setPos(0,0);
-                       flash->setOffset(-60, -20);
-                       Q_ASSERT(flash != nullptr);
-                       amm->set_collider(flash);
-                       if(My_map.get_map(y, x - 1) == 2)
-                       {
-                           score += soft_score;
-                           change_map(y, x - 1);
-                       }
-                   }
-                   else if(i == 3)
-                   {
-                       if(My_map.get_map(y, x + 1) != 0 && My_map.get_map(y, x + 1) != 2)
-                           continue;
-                       auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
-                       flash->setPos(0,0);
-                       flash->setOffset(20, -20);
-                       Q_ASSERT(flash != nullptr);
-                       amm->set_collider(flash);
-                       if(My_map.get_map(y, x + 1) == 2)
-                       {
-                           change_map(y, x + 1);
-                           score += soft_score;
-                       }
-                   }
-                   else
-                   {
-                       if(My_map.get_map(y - 1, x) != 0 && My_map.get_map(y - 1, x) != 2)
-                           continue;
-                       auto flash = new QGraphicsPixmapItem(this->transform);
-                       flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
-                       flash->setPos(0,0);
-                       flash->setOffset(-20, -60);
-                       Q_ASSERT(flash != nullptr);
-                       amm->set_collider(flash);
-                       if(My_map.get_map(y - 1, x) == 2)
-                       {
-                             change_map(y - 1, x);
-                             score += soft_score;
-                       }
-                   }
-                        attachGameObject(ammo);
-               }
-               else
-               {
-                   //这个是威力加倍后的场景
-                   qDebug() << "威力加倍，没有图片";
-               }
+       for(int i = 1; i <= range; i++)
+       {
+           //四个方向(down)
+           if(My_map.get_map(y + i, x) != 0 && My_map.get_map(y + i, x) != 2)
+               break;
+            develop_bomb(-20, 20 + 40 * (i - 1));
+           if(My_map.get_map(y + i, x) == 2)
+           {
+               score += soft_score;//得分准备
+               //说明是软墙，此时要进行准备摆放道具图片，并更改二维数组的内容
+                change_map(y + i, x);
+           }
        }
-
-
+       for(int i = 1; i <= range; i++)
+       {
+           //left
+           if(My_map.get_map(y, x - i) != 0 && My_map.get_map(y, x - i) != 2)
+               break;
+           develop_bomb(-20 + (-40) * i, -20);
+           if(My_map.get_map(y, x - i) == 2)
+           {
+               score += soft_score;
+               change_map(y, x - i);
+           }
+       }
+       for(int i = 1; i <= range; i++)
+       {
+           //right
+           if(My_map.get_map(y, x + i) != 0 && My_map.get_map(y, x + i) != 2)
+               break;
+            develop_bomb(20 + 40 * (i - 1), -20);
+           if(My_map.get_map(y, x + i) == 2)
+           {
+               score += soft_score;
+               change_map(y, x + i);
+           }
+       }
+       for(int i = 1; i <= range; i++)
+       {
+            //up
+           if(My_map.get_map(y - i, x) != 0 && My_map.get_map(y - i, x) != 2)
+               break;
+            develop_bomb(-20, -20 + (-40) * i);
+           if(My_map.get_map(y - i, x) == 2)
+           {
+               score += soft_score;
+               change_map(y - i, x);
+           }
+       }
    }
    else
    {
@@ -140,41 +101,7 @@ void Shooter::onUpdate(float deltaTime) {
            {
                imageTransform->setImage(":/bomb1/image/Bomb1/1.png");
            }
-       //}
-       /*else
-       {
-           if(wait_time == 20 || wait_time == 80 || wait_time == 140)
-           {
-               imageTransform->setImage(":/bomb1/image/Bomb1/22.png");
-           }
-           else if (wait_time == 40 || wait_time == 100 || wait_time == 160)
-           {
-               imageTransform->setImage(":/bomb1/image/Bomb1/33.png");
-           }
-           else if(wait_time == 60 || wait_time == 120 || wait_time == 180)
-           {
-               imageTransform->setImage(":/bomb1/image/Bomb1/11.png");
-           }
-       }  */
    }
-  /*cooldown -= deltaTime;
-  if (cooldown > 0) return;
-  cooldown = interval;
-
-  QPointF velocity;
-  if (this->getKey(Qt::Key_W))
-    velocity = QPointF(0, -100);
-  else if (this->getKey(Qt::Key_A))
-    velocity = QPointF(-100, 0);
-  else if (this->getKey(Qt::Key_S))
-    velocity = QPointF(0, 100);
-  else
-    velocity = QPointF(100, 0);
-  auto ammo = new GameObject();
-  ammo->addComponent(new Transform(this->transform->pos()));
-  ammo->addComponent(new Ammo(velocity));
-  attachGameObject(ammo);*/
-
 }
 
 void Shooter::set_wait_time(float t)
@@ -204,7 +131,7 @@ int Shooter::get_score()
 
 int Shooter::random_tool()
 {
-    quint32 pr = (QRandomGenerator::global()->generate()) % 5;
+    quint32 pr = (QRandomGenerator::global()->generate()) % 7;
     return -pr;
 }
 
@@ -216,6 +143,7 @@ void Shooter::change_map(int x, int y)
         //新建一个gameObject然后把它挂到玩家的transform上面
         //或者是自己就是一个gameObject，然后自己也有transform，放进list里面，玩家捡到了就detach掉
         auto tool = new GameObject();
+
         if(random == speed_tool)
         {
             //获得加速道具
@@ -225,8 +153,9 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/speed.png")
                     .addToGameObject(tool);
-            //qDebug() << "1";
+            qDebug() << "1";
             My_map.set_map(x, y, speed_tool);
+            //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
             qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
         }
         else if(random == range_tool)
@@ -239,6 +168,7 @@ void Shooter::change_map(int x, int y)
                     .addToGameObject(tool);
             qDebug() << "2";
             My_map.set_map(x, y, range_tool);
+            //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
             qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
         }
         else
@@ -249,13 +179,15 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/num.png")
                     .addToGameObject(tool);
-            //qDebug() << "3";
+            qDebug() << "3";
             My_map.set_map(x, y, bomb_num_tool);
-            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+            //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
+            qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
         }
         attachGameObject(tool);
         tool->addComponent(new Transform);
         tool->addComponent(new ImageTransform);
+        auto tr = tool->getComponent<Transform>();
         tool_list.emplace_back(tool);//并且把它加到道具队列中
     }
     else
@@ -263,4 +195,20 @@ void Shooter::change_map(int x, int y)
         My_map.set_map(x, y, 0);//如果没有抽到道具，还是相当于炸开
     }
 
+}
+
+void Shooter::develop_bomb(float offsetX, float offsetY)
+{
+    //利用这个添加光束火焰
+    auto ammo = new GameObject();
+    ammo->addComponent(new Transform);
+    ammo->addComponent(new Ammo(range));
+    auto amm = ammo->getComponent<Ammo>();
+    auto flash = new QGraphicsPixmapItem(this->transform);
+    flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
+    flash->setPos(0, 0);//这个是以图片的中心点的位置发射
+    flash->setOffset(offsetX, offsetY);
+    Q_ASSERT(flash != nullptr);
+    amm->set_collider(flash);
+    attachGameObject(ammo);
 }

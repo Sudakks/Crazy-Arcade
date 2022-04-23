@@ -33,6 +33,7 @@ public:
   int get_score();
   int random_tool();//用这个来随机生成道具
   void change_map(int x, int y);//获得道具后改变地图
+  void develop_bomb(float offsetX, float offsetY);
 };
 
 #endif  // SHOOTER_H_
