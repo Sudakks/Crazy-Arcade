@@ -37,6 +37,7 @@ set(PROJECT_SOURCES
         physics.h physics.cpp
         usercontroller.h usercontroller.cpp
         map.h map.cpp
+        aicontroller.h aicontroller.cpp
         image.qrc
 )
 

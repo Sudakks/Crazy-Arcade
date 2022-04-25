@@ -39,10 +39,10 @@ void Shooter::onUpdate(float deltaTime) {
            //四个方向(down)
            if(My_map.get_map(y + i, x) != 0 && My_map.get_map(y + i, x) != 2)
                break;
-            develop_bomb(-20, 20 + 40 * (i - 1));
+            develop_bomb(-20 + 5, 20 + 40 * (i - 1));
            if(My_map.get_map(y + i, x) == 2)
            {
-               score += soft_score;//得分准备
+               //score += soft_score;//得分准备
                //说明是软墙，此时要进行准备摆放道具图片，并更改二维数组的内容
                 change_map(y + i, x);
            }
@@ -52,10 +52,10 @@ void Shooter::onUpdate(float deltaTime) {
            //left
            if(My_map.get_map(y, x - i) != 0 && My_map.get_map(y, x - i) != 2)
                break;
-           develop_bomb(-20 + (-40) * i, -20);
+           develop_bomb(-20 + (-40) * i + 5, -20);
            if(My_map.get_map(y, x - i) == 2)
            {
-               score += soft_score;
+               //score += soft_score;
                change_map(y, x - i);
            }
        }
@@ -64,10 +64,10 @@ void Shooter::onUpdate(float deltaTime) {
            //right
            if(My_map.get_map(y, x + i) != 0 && My_map.get_map(y, x + i) != 2)
                break;
-            develop_bomb(20 + 40 * (i - 1), -20);
+            develop_bomb(5 + 20 + 40 * (i - 1), -20);
            if(My_map.get_map(y, x + i) == 2)
            {
-               score += soft_score;
+               //score += soft_score;
                change_map(y, x + i);
            }
        }
@@ -76,11 +76,39 @@ void Shooter::onUpdate(float deltaTime) {
             //up
            if(My_map.get_map(y - i, x) != 0 && My_map.get_map(y - i, x) != 2)
                break;
-            develop_bomb(-20, -20 + (-40) * i);
+            develop_bomb(-20 + 5, -20 + (-40) * i);
            if(My_map.get_map(y - i, x) == 2)
            {
-               score += soft_score;
+               //score += soft_score;
                change_map(y - i, x);
+           }
+       }
+   }
+   else if(wait_time > 180)
+   {
+       //这个是用来变换照片的
+       if(wait_time == 195)
+       {
+            for(int i = 0; i < flash_list.size(); i++)
+            {
+                auto fla = flash_list.at(i);
+                fla->setPixmap(QPixmap(":/flash/image/Flash/2.png"));
+            }
+       }
+       else if(wait_time == 210)
+       {
+           for(int i = 0; i < flash_list.size(); i++)
+           {
+               auto fla = flash_list.at(i);
+               fla->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
+           }
+       }
+       else if(wait_time == 225)
+       {
+           for(int i = 0; i < flash_list.size(); i++)
+           {
+               auto fla = flash_list.at(i);
+               fla->setPixmap(QPixmap(":/flash/image/Flash/3.png"));
            }
        }
    }
@@ -151,10 +179,10 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/speed.png")
                     .addToGameObject(tool);
-            qDebug() << "1";
+            //qDebug() << "1";
             My_map.set_map(x, y, speed_tool);
             //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
-            qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
         }
         else if(random == range_tool)
         {
@@ -164,10 +192,10 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/range.png")
                     .addToGameObject(tool);
-            qDebug() << "2";
+            //qDebug() << "2";
             My_map.set_map(x, y, range_tool);
             //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
-            qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
         }
         else
         {
@@ -177,10 +205,10 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/num.png")
                     .addToGameObject(tool);
-            qDebug() << "3";
+            //qDebug() << "3";
             My_map.set_map(x, y, bomb_num_tool);
             //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
-            qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
         }
         attachGameObject(tool);
         tool->addComponent(new Transform);
@@ -199,13 +227,13 @@ void Shooter::develop_bomb(float offsetX, float offsetY)
     //利用这个添加光束火焰
     auto ammo = new GameObject();
     ammo->addComponent(new Transform);
-    ammo->addComponent(new Ammo(range));
+    ammo->addComponent(new Ammo(this->transform->type()));
     auto amm = ammo->getComponent<Ammo>();
     auto flash = new QGraphicsPixmapItem(this->transform);
     flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
     flash->setPos(0, 0);//这个是以图片的中心点的位置发射
     flash->setOffset(offsetX, offsetY);
-    Q_ASSERT(flash != nullptr);
+    this->flash_list.emplace_back(flash);
     amm->set_collider(flash);
     attachGameObject(ammo);
 }

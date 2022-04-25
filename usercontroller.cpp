@@ -37,7 +37,6 @@ void UserController::onAttach () {
     Q_ASSERT ( imageTransform != nullptr );
     transform = this->gameObject->getComponent<Transform>();
     Q_ASSERT ( transform != nullptr );
-
 }
 
 void UserController::onUpdate( float deltaTime ) {
@@ -63,19 +62,30 @@ void UserController::onUpdate( float deltaTime ) {
         {
             auto shooter = bomb_list.at(i);
             auto shoot = shooter->getComponent<Shooter>();
-            if(shoot->get_wait_time() == 4 * 60)
+            auto trans = shooter->getComponent<Transform>();
+            if(shoot->get_wait_time() >= 4 * 60)
             {
                 //表明这个炸弹已经要被销毁
-                score += shoot->get_score();
-                bomb_list.pop_front();//先从队列中移走
-                this->detachGameObject(shooter);
-                bomb_num++;
+                if(trans->type() == this->transform->type())
+                {
+                    //score += shoot->get_score();
+                    bomb_num++;
+                    //说明是自己的炸弹
+                    bomb_list.pop_front();//先从队列中移走
+                    this->detachGameObject(shooter);
+                }
+                else if(trans->type() < 0)
+                {
+                    //第二种情况是机器人放的炸弹
+                    bomb_list.pop_front();//先从队列中移走
+                    this->detachGameObject(shooter);
+                }
             }
         }
+        //qDebug() << p1_score << p2_score;
     }
     if(getKey(key_bomb) && bomb_num > 0 && limit <= 0)
     {
-        qDebug() << "yes";
         limit = deltaTime * 60;
         //因为一次按键它会读入很多下，所以限制按键的读入(即隔多少秒之后才能继续读入)
         float x = this->transform->pos().x();
@@ -94,7 +104,11 @@ void UserController::onUpdate( float deltaTime ) {
         shooter->addComponent(new Component);
         shooter->addComponent(new ImageTransform);
         shooter->addComponent(new Transform);
-        shooter->addComponent(new Shooter(this->range, 0, transform));//这个是调用userController的数据
+        shooter->addComponent(new Shooter(this->range, 0, transform));
+        //这个是调用userController的数据
+        //这个炸弹也要和玩家一样具有相同的type,这样才好把分加上去
+        auto trans = shooter->getComponent<Transform>();
+        trans->setType(this->transform->type());
         this->attachGameObject(shooter);
         //这一步相当于把shoooter放到了gameScene上面
     }
@@ -105,28 +119,28 @@ void UserController::onUpdate( float deltaTime ) {
            imageTransform->setImage(left_image);
            if(judge_walk(-35 * speed, 0, 1))
                vx -= 35 * speed;
-           qDebug() << "vxA = " << vx;
+           //qDebug() << "vxA = " << vx;
         }
         if (getKey(key_right) )
         {
             imageTransform->setImage(right_image);
             if(judge_walk(35 * speed, 0, 2))
                 vx += 35 * speed;
-            qDebug() << "vxD = " << vx;
+            //qDebug() << "vxD = " << vx;
         }
         if (getKey(key_up) )
         {
             imageTransform->setImage(up_image);
             if(judge_walk(0, -35 * speed, 3))
                 vy -= 35 * speed;
-            qDebug() << "vyW = " << vy;
+            //qDebug() << "vyW = " << vy;
         }
         if (getKey(key_down) )
         {
             imageTransform->setImage(down_image);
             if(judge_walk(0, 35 * speed, 4))
                 vy += 35 * speed;
-            qDebug() << "vyS = " << vy;
+            //qDebug() << "vyS = " << vy;
         }
             physics->setVelocity(vx, vy);
     }
@@ -154,7 +168,7 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     const float wall_h = 40;
     const float wall_w = 40;
     const float offset = 20;
-    const float offset1 = 35;
+    const float offset1 = 27;
     const float offset2 = 10;
     //
     float left_x = this->transform->pos().x();
@@ -201,8 +215,8 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     {
         //up
         y = up_y;
-        qDebug() << "1所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w);
-        qDebug() << "2所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w);
+        //qDebug() << "1所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w);
+        //qDebug() << "2所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w);
         if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
             return false;
         else
@@ -216,8 +230,8 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     {
         //down
         y = down_y;
-        qDebug() << "1所在的位置为" << y / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (left_x + offset2) / wall_w);
-        qDebug() << "2所在的位置为" << y / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (right_x - offset2) / wall_w);
+        //qDebug() << "1所在的位置为" << y / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (left_x + offset2) / wall_w);
+        //qDebug() << "2所在的位置为" << y / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (right_x - offset2) / wall_w);
         if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
             return false;
         else
@@ -232,7 +246,7 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     int mapX = nowX / wall_w;
     int mapY = nowY / wall_h;
     //
-    qDebug() << "现在所在坐标为(" << mapY  << ',' << mapX << ")" << "， 内容为 " << My_map.get_map(mapY, mapX);
+    //qDebug() << "现在所在坐标为(" << mapY  << ',' << mapX << ")" << "， 内容为 " << My_map.get_map(mapY, mapX);
     if(My_map.get_map(mapY, mapX) >= 1)
     {
         return false;
@@ -246,31 +260,30 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     //似乎好像改对了吧www太难了www
 }
 
-int UserController::get_score()
-{
-    return this->score;
-}
+//int UserController::get_score()
+//{
+//    return this->score;
+//}
 
-void UserController::add_score(int s)
-{
-    this->score += s;
-}
-
+//void UserController::add_score(int s)
+//{
+//    this->score += s;
+//}
 
 void UserController::judge_tool(int x, int y)
 {
     int now = My_map.get_map(x, y);
-    qDebug() << x << "  "<< y;
+    //qDebug() << x << "  "<< y;
     if(now == speed_tool || now == bomb_num_tool || now == range_tool)
     {
         //利用队列查找位置
-        qDebug() << tool_list.size();
+        //qDebug() << tool_list.size();
         auto begin = tool_list.begin();
         for(int i = 0; i < tool_list.size(); i++)
         {
             GameObject* tool = tool_list.at(i);
             Transform* pos = tool->getComponent<Transform>();
-            qDebug() << "道具的位置是" << pos->pos().y() / 40 << "  "<< pos->pos().x() / 40;
+            //qDebug() << "道具的位置是" << pos->pos().y() / 40 << "  "<< pos->pos().x() / 40;
             if(pos->pos().x() / 40 == y && pos->pos().y() / 40 == x)
             {
                 //说明找到了这一个道具

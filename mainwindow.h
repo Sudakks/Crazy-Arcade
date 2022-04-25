@@ -18,7 +18,8 @@ class MainWindow : public QMainWindow {
  public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
-  void init_player(char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right);
+  void init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right);
+  void init_robot(int type, char* photo, QString up, QString down, QString left, QString right);
  private:
   Ui::MainWindow *ui;
   GameScene *gameScene;

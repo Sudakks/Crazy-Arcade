@@ -18,6 +18,7 @@
 #include <QRandomGenerator>
 #include "imagetransform.h"
 #include "common.h"
+#include "aicontroller.h"
 
 void loadScene(GameScene *gameScene) {
   //加载地图图片
@@ -119,32 +120,7 @@ void loadScene(GameScene *gameScene) {
           .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/other")
           .addToGameObject(wall);
   gameScene->attachGameObject(wall);
-  //初始化玩家
-    /*while(1)
-    {
-        quint32 x = (QRandomGenerator::global()->generate()) % 14 + 1;
-        quint32 y = (QRandomGenerator::global()->generate()) % 20 + 1;
-        if(!My_map.get_map(x, y) && (!My_map.get_map(x-1,y) || !My_map.get_map(x+1, y) || !My_map.get_map(x, y-1) || !My_map.get_map(x, y+1)))
-        {
-            auto player1 = new GameObject();
-            ImageTransformBuilder()
-                    .setPos(QPointF(40*y,40*x))
-                    .setAlignment(Qt::AlignLeft | Qt::AlignTop)
-                    .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Player1/p1_live")
-                    .addToGameObject(player1);
-            //player1->addComponent(new Hitable);
-            player1->addComponent(new Physics());
-            player1->addComponent(new UserController(1, 1, 1, Qt::Key_W, Qt::Key_S, Qt::Key_A, Qt::Key_D, Qt::Key_Space));//玩家的相关数据的初始化
-            player1->addComponent(new ImageTransform);
-            gameScene->attachGameObject(player1);
-            auto user = player1->getComponent<UserController>();
-            user->set_tool_speed(0);//设置初始的速度
-            user->set_tool_range(0);
-            user->set_tool_bomb_num(0);//初始时的道具时间都为0
-            break;
-        }
-    }*/
-
+  //打印二维数组
     for(int i = 0; i < 15; i++)
     {
         for(int j = 0; j < 20; j++)
@@ -175,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent)
   QString str1(":/player1/image/Player1/p1_live.png");
   QByteArray cpath1 = str1.toLocal8Bit();
   char*path1 = cpath1.data();//这一步是把QString转为char*类型
-  init_player(path1, Qt::Key_W, Qt::Key_S, Qt::Key_A, Qt::Key_D, Qt::Key_Space,
+  init_player(1, path1, Qt::Key_W, Qt::Key_S, Qt::Key_A, Qt::Key_D, Qt::Key_Space,
                   ":/player1/image/Player1/p1_up.png",
                   ":/player1/image/Player1/p1_down.png",
                   ":/player1/image/Player1/p1_left.png",
@@ -185,16 +161,36 @@ MainWindow::MainWindow(QWidget *parent)
   QString str2(":/player2/image/Player2/p2_live.png");
   QByteArray cpath2 = str2.toLocal8Bit();
   char*path2 = cpath2.data();
-  init_player(path2, Qt::Key_Up, Qt::Key_Down, Qt::Key_Left, Qt::Key_Right, Qt::Key_Return,
+  init_player(2, path2, Qt::Key_Up, Qt::Key_Down, Qt::Key_Left, Qt::Key_Right, Qt::Key_Return,
                   ":/player2/image/Player2/p2_up.png",
                   ":/player2/image/Player2/p2_down.png",
                   ":/player2/image/Player2/p2_left.png",
                   ":/player2/image/Player2/p2_right.png");
+
+  //初始化robot1
+  /*QString str3(":/robot1/image/Robot1/r1_down.png");
+  QByteArray cpath3 = str3.toLocal8Bit();
+  char*path3 = cpath3.data();
+  init_robot(-1, path3,
+             ":/robot1/image/Robot1/r1_up.png",
+             ":/robot1/image/Robot1/r1_down.png",
+             ":/robot1/image/Robot1/r1_left.png",
+             ":/robot1/image/Robot1/r1_right.png");*/
+
+  //初始化robot2
+  /*QString str4(":/robot2/image/Robot2/r2_down.png");
+  QByteArray cpath4 = str4.toLocal8Bit();
+  char*path4 = cpath4.data();
+  init_robot(-2, path4,
+             ":/robot2/image/Robot2/r2_up.png",
+             ":/robot2/image/Robot2/r2_down.png",
+             ":/robot2/image/Robot2/r2_left.png",
+             ":/robot2/image/Robot2/r2_right.png");*/
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::init_player(char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right)
+void MainWindow::init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right)
 {
     while(1)
     {
@@ -208,7 +204,7 @@ void MainWindow::init_player(char* photo, Qt::Key key_up, Qt::Key key_down, Qt::
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(photo)
                     .addToGameObject(player);
-            //player->addComponent(new Hitable);
+            player->addComponent(new Hitable);
             player->addComponent(new Physics());
             player->addComponent(new UserController(1, 1, 1, key_up, key_down, key_left, key_right, key_bomb, up, down, left, right));//玩家的相关数据的初始化
             player->addComponent(new ImageTransform);
@@ -217,6 +213,34 @@ void MainWindow::init_player(char* photo, Qt::Key key_up, Qt::Key key_down, Qt::
             user->set_tool_speed(0);//设置初始的速度
             user->set_tool_range(0);
             user->set_tool_bomb_num(0);//初始时的道具时间都为0
+            auto trans = player->getComponent<Transform>();
+            trans->setType(type);
+            break;
+        }
+    }
+}
+
+void MainWindow::init_robot(int type, char *photo, QString up, QString down, QString left, QString right)
+{
+    while(1)
+    {
+        quint32 x = (QRandomGenerator::global()->generate()) % 14;
+        quint32 y = (QRandomGenerator::global()->generate()) % 20;
+        if(My_map.get_map(x, y) == 0 && (!My_map.get_map(x - 1, y) || !My_map.get_map(x + 1, y) || !My_map.get_map(x, y - 1) || !My_map.get_map(x, y + 1)))
+        {
+            auto robot = new GameObject();
+            ImageTransformBuilder()
+                    .setPos(QPointF(40*y,40*x))
+                    .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                    .setImage(photo)
+                    .addToGameObject(robot);
+            robot->addComponent(new Hitable);
+            robot->addComponent(new Physics());
+            robot->addComponent(new AIcontroller(up, down, left, right));//玩家的相关数据的初始化
+            robot->addComponent(new ImageTransform);
+            auto trans = robot->getComponent<Transform>();
+            trans->setType(type);
+            gameScene->attachGameObject(robot);
             break;
         }
     }

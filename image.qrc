@@ -68,18 +68,6 @@
         <file>image/Player2/p2_right.png</file>
         <file>image/Player2/p2_up.png</file>
     </qresource>
-    <qresource prefix="/flash_1">
-        <file>image/Flash/down/down1.png</file>
-        <file>image/Flash/left/left1.png</file>
-        <file>image/Flash/right/right1.png</file>
-        <file>image/Flash/up/up1.png</file>
-    </qresource>
-    <qresource prefix="/flash_2">
-        <file>image/Flash/down/down2.png</file>
-        <file>image/Flash/left/left2.png</file>
-        <file>image/Flash/right/right2.png</file>
-        <file>image/Flash/up/up2.png</file>
-    </qresource>
     <qresource prefix="/flash">
         <file>image/Flash/1.png</file>
         <file>image/Flash/2.png</file>

@@ -14,7 +14,7 @@ class Transform : public Component, public QGraphicsItem {
   Transform &operator=(const Transform &) = delete;
 
   virtual int type() const override;
-  void setType(int type);
+  void setType(int type);//就是用来设置下面的mType
 
  protected:
   int mType = QGraphicsItem::Type;

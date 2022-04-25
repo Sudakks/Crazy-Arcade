@@ -23,7 +23,7 @@ private:
     float tool_speed = 0;
     float tool_bomb_num = 0;//道具的时限
     float tool_range = 0;
-    int score = 0;
+    //int score = 0;
     float limit = -1;//用来控制按下空格键多久才能继续按下(先设置为1.5s)
     //利用构造函数，分别表示两个玩家
     Qt::Key key_up;
@@ -42,7 +42,7 @@ private:
     Physics *physics;
     Transform *transform;
     ImageTransform * imageTransform;
-    QList<GameObject*> bomb_list;//里面装的是指针
+
 
 public :
     //速度
@@ -56,8 +56,8 @@ public :
     void set_tool_bomb_num(int t);
 
     bool judge_walk(float vx, float vy, int dir);
-    int get_score();
-    void add_score(int s);
+    //int get_score();
+    //void add_score(int s);
     void judge_tool(int x, int y);
 
 };
