@@ -82,7 +82,6 @@ void UserController::onUpdate( float deltaTime ) {
                 }
             }
         }
-        //qDebug() << p1_score << p2_score;
     }
     if(getKey(key_bomb) && bomb_num > 0 && limit <= 0)
     {

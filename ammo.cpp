@@ -87,5 +87,10 @@ void Ammo::judge_type(Transform *transform, GameObject* gameObject)
             p1_score += soft_score;
         else if(type == 2)
             p2_score += soft_score;
+        //通过这里改变地图的表示
+        float X = transform->pos().x();
+        float Y = transform->pos().y();
+        //注意X和Y是反过来的
+        My_map.set_map(Y / 40, X / 40, 0);
     }
 }

@@ -40,12 +40,6 @@ void Shooter::onUpdate(float deltaTime) {
            if(My_map.get_map(y + i, x) != 0 && My_map.get_map(y + i, x) != 2)
                break;
             develop_bomb(-20 + 5, 20 + 40 * (i - 1));
-           if(My_map.get_map(y + i, x) == 2)
-           {
-               //score += soft_score;//得分准备
-               //说明是软墙，此时要进行准备摆放道具图片，并更改二维数组的内容
-                change_map(y + i, x);
-           }
        }
        for(int i = 1; i <= range; i++)
        {
@@ -53,11 +47,6 @@ void Shooter::onUpdate(float deltaTime) {
            if(My_map.get_map(y, x - i) != 0 && My_map.get_map(y, x - i) != 2)
                break;
            develop_bomb(-20 + (-40) * i + 5, -20);
-           if(My_map.get_map(y, x - i) == 2)
-           {
-               //score += soft_score;
-               change_map(y, x - i);
-           }
        }
        for(int i = 1; i <= range; i++)
        {
@@ -65,11 +54,6 @@ void Shooter::onUpdate(float deltaTime) {
            if(My_map.get_map(y, x + i) != 0 && My_map.get_map(y, x + i) != 2)
                break;
             develop_bomb(5 + 20 + 40 * (i - 1), -20);
-           if(My_map.get_map(y, x + i) == 2)
-           {
-               //score += soft_score;
-               change_map(y, x + i);
-           }
        }
        for(int i = 1; i <= range; i++)
        {
@@ -77,11 +61,6 @@ void Shooter::onUpdate(float deltaTime) {
            if(My_map.get_map(y - i, x) != 0 && My_map.get_map(y - i, x) != 2)
                break;
             develop_bomb(-20 + 5, -20 + (-40) * i);
-           if(My_map.get_map(y - i, x) == 2)
-           {
-               //score += soft_score;
-               change_map(y - i, x);
-           }
        }
    }
    else if(wait_time > 180)

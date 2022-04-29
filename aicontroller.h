@@ -19,7 +19,6 @@ void onAttach () override;
 void onUpdate( float deltaTime ) override;
 bool out_of_range(int x, int y);
 bool judge(float vx, float vy, int dir);
-void update_image(int dirX, int dirY);
 void free_walk();
 void bomb_walk();
 
@@ -34,8 +33,8 @@ private:
     int range = 1;//机器人的炸弹范围
     int speed = 1;
 
-    int bomb_x;
-    int bomb_y;
+    int bomb_x = 0;
+    int bomb_y = 0;
 
     QString up_image;
     QString down_image;

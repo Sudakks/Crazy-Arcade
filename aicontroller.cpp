@@ -35,43 +35,10 @@ void AIcontroller::onUpdate(float deltaTime)
     if(bomb_waiting > 0)
         bomb_waiting--;
     float vx = 0, vy = 0;
-    /*if(bomb_list.size())//这个和userController的逻辑一样(copy_ver)
+    /*if(!bombX && !bombY)
     {
-        //表示有炸弹需要处理
-        for(int i = 0; i < bomb_list.size(); i++)
-        {
-            auto shooter = bomb_list.at(i);
-            auto shoot = shooter->getComponent<Shooter>();
-            if(shoot->get_wait_time() == 4 * 60)
-            {
-                //表明这个炸弹已经要被销毁
-                bomb_list.pop_front();//先从队列中移走
-                this->detachGameObject(shooter);
-                bomb_num++;
-                whether_bomb = 0;
-            }
-        }
-    }
-    if(whether_bomb == 1)
-    {
-
+        bomb_walk();
         //这个就属于放了炸弹，然后要判断是否规避了炸弹
-        int dx[4] = {1, -1, 0, 0};
-        int dy[4] = {0, 0, 1, -1};
-        for(int i = 0; i < 4; i++)
-        {
-            if(out_of_range(Y + dy[i], X + dx[i]) == true)
-            {
-                //表示可以走
-                vx += dx[i] * 30;
-                vy += dy[i] * 30;
-                //这里还要更新图片
-                update_image(dx[i], dy[i]);
-                break;
-            }
-            //先随机一个方向，判断是否能走
-        }
-        physics->setVelocity(vx, vy);
     }
     else if(bomb_num > 0 && bomb_waiting <= 0 && whether_bomb == 0)
     {
@@ -123,29 +90,26 @@ void AIcontroller::onUpdate(float deltaTime)
         if(flag == true)
         {
             //表示有地方可以用来放炸弹
-            bomb_num--;
-            bombX = X / 40, bombY = Y / 40;
+            bombX = X, bombY = Y;
             bomb_waiting = 60 * 7;
-            whether_bomb = 1;
             bomb = new GameObject();
             bomb_list.emplace_back(bomb);
             ImageTransformBuilder()
-                    .setPos(QPointF(X + 20, Y + 20))
+                    .setPos(QPointF(X + 20, X + 20))
                     .setImage(":/bomb1/image/Bomb1/1.png")
                     .setAlignment(Qt::AlignCenter)
                     .addToGameObject(bomb);
             bomb->addComponent(new Component);
             bomb->addComponent(new ImageTransform);
             bomb->addComponent(new Transform);
-            bomb->addComponent(new Shooter(this->range, 0, this->transform, 0));//这个是调用userController的数据
+            bomb->addComponent(new Shooter(this->range, 0, this->transform));//这个是调用userController的数据
             this->attachGameObject(bomb);
         }
-    }*/
-    //else if(whether_bomb == 0)
-    {
-        qDebug() << "free walk";
-        free_walk();
     }
+    else if(whether_bomb == 0)
+    {*/
+        free_walk();
+    //}
 }
 
 bool AIcontroller::out_of_range(int x, int y)
@@ -174,7 +138,7 @@ bool AIcontroller::out_of_range(int x, int y)
 bool AIcontroller::judge(float vx, float vy, int dir)
 {
     //这个就是判断机器人是否能走(欸还是要分方向的)
-    float deltaTime = 1 / 60;
+   /* float deltaTime = 1 / 60;
     float x = this->transform->pos().x();
     float y = this->transform->pos().y();
     float offset = 5;
@@ -248,10 +212,93 @@ bool AIcontroller::judge(float vx, float vy, int dir)
             return false;
         else
             return true;
+    }*/
+    float x, y;
+    //
+    const float wall_h = 40;
+    const float wall_w = 40;
+    const float offset = 20;
+    const float offset1 = 27;
+    const float offset2 = 10;
+    //
+    float left_x = this->transform->pos().x();
+    float up_y = this->transform->pos().y();
+    float right_x = left_x + wall_w;
+    float down_y = up_y + wall_h;
+    float half_y = (up_y + down_y) / 2;
+    //
+    int up_Y = up_y / wall_h;
+    int half_Y = half_y / wall_h;
+    if(dir == 2)
+    {
+        //left
+        x = left_x;
+        if(up_Y == half_Y)
+        {
+            y = up_y;
+            y += offset1;
+        }
+
+        else
+        {
+            y = down_y;
+            y -= offset;
+        }
+    }
+    else if(dir == 4)
+    {
+        //right
+        x = right_x;
+        if(up_Y == half_Y)
+        {
+            y = up_y;
+            y += offset1;
+        }
+
+        else
+        {
+            y = down_y;
+            y -= offset;
+        }
+    }
+    else if(dir == 1)
+    {
+        //up
+        y = up_y;
+        if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
+            return false;
+        else
+        {
+            return true;
+        }
+    }
+    else
+    {
+        //down
+        y = down_y;
+        if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
+            return false;
+        else
+        {
+            return true;
+        }
+    }
+    float nowX = x + vx * 0.0166;
+    float nowY = y + vy * 0.0166;
+    int mapX = nowX / wall_w;
+    int mapY = nowY / wall_h;
+
+    if(My_map.get_map(mapY, mapX) >= 1)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
     }
 }
-
-void AIcontroller::update_image(int dirX, int dirY)
+//
+/*void AIcontroller::update_image(int dirX, int dirY)
 {
     if(dirX == 1)
     {
@@ -273,13 +320,98 @@ void AIcontroller::update_image(int dirX, int dirY)
         //up
         imageTransform->setImage(up_image);
     }
-}
+    float x, y;
+    //
+    const float wall_h = 40;
+    const float wall_w = 40;
+    const float offset = 20;
+    const float offset1 = 27;
+    const float offset2 = 10;
+    //
+    float left_x = this->transform->pos().x();
+    float up_y = this->transform->pos().y();
+    float right_x = left_x + wall_w;
+    float down_y = up_y + wall_h;
+    float half_y = (up_y + down_y) / 2;
+    //
+    int up_Y = up_y / wall_h;
+    int half_Y = half_y / wall_h;
+    if(dir == 2)
+    {
+        //left
+        x = left_x;
+        if(up_Y == half_Y)
+        {
+            y = up_y;
+            y += offset1;
+        }
 
+        else
+        {
+            y = down_y;
+            y -= offset;
+        }
+    }
+    else if(dir == 4)
+    {
+        //right
+        x = right_x;
+        if(up_Y == half_Y)
+        {
+            y = up_y;
+            y += offset1;
+        }
+
+        else
+        {
+            y = down_y;
+            y -= offset;
+        }
+    }
+    else if(dir == 1)
+    {
+        //up
+        y = up_y;
+        if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
+            return false;
+        else
+        {
+            return true;
+        }
+    }
+    else
+    {
+        //down
+        y = down_y;
+        if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
+            return false;
+        else
+        {
+            return true;
+        }
+    }
+    float nowX = x + vx * 0.0166;
+    float nowY = y + vy * 0.0166;
+    int mapX = nowX / wall_w;
+    int mapY = nowY / wall_h;
+
+    if(My_map.get_map(mapY, mapX) >= 1)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+*/
 void AIcontroller::free_walk()
 {
     float vx = 0, vy = 0;
     qDebug() << "------------";
-    int dir = 1;
+    qDebug() << "free walk";
+    quint32 dir = (QRandomGenerator::global()->generate()) % 4 + 1;
+    //这是利用随机数版本
     if(last_dir == 1)
     {
         //up
@@ -386,4 +518,5 @@ void AIcontroller::bomb_walk()
     float X = this->transform->pos().x();
     float Y = this->transform->pos().y();
     //up, left, down, right
+    //规避炸弹再结合free_walk的逻辑进行判断
 }
