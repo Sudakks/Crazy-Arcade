@@ -11,16 +11,18 @@
 #include <QList>
 #include <QRandomGenerator>
 
-Shooter::Shooter(float range, float wait_time, Transform* userTransform) : Component() {
+Shooter::Shooter(float range, float wait_time, int userType) : Component() {
     this->range = range;
     this->wait_time = wait_time;
-    this->userTransform = userTransform;//这个获取到了放炸弹的人的transform
+    this->type = userType;
+    //this->userTransform = userTransform;//这个获取到了放炸弹的人的transform
     //所以我可以把道具的图片放到这个transform上面
 }
 
 void Shooter::onAttach() {
     this->transform = this->gameObject->getComponent<Transform>();
     Q_ASSERT(this->transform != nullptr);
+    this->transform->setType(this->type);
     this->imageTransform = this->gameObject->getComponent<ImageTransform>();
     Q_ASSERT(this->imageTransform != nullptr);
 }
@@ -39,28 +41,36 @@ void Shooter::onUpdate(float deltaTime) {
            //四个方向(down)
            if(My_map.get_map(y + i, x) != 0 && My_map.get_map(y + i, x) != 2)
                break;
-            develop_bomb(-20 + 5, 20 + 40 * (i - 1));
+            develop_bomb(-20 + 5, 20 + 35 * (i - 1));
+            if(My_map.get_map(y + i, x) == 2)
+                change_map(y + i, x);
        }
        for(int i = 1; i <= range; i++)
        {
            //left
            if(My_map.get_map(y, x - i) != 0 && My_map.get_map(y, x - i) != 2)
                break;
-           develop_bomb(-20 + (-40) * i + 5, -20);
+           develop_bomb(-20 + (-30) * i + 5, -20 + 5);
+           if(My_map.get_map(y, x - i) == 2)
+               change_map(y, x - i);
        }
        for(int i = 1; i <= range; i++)
        {
            //right
            if(My_map.get_map(y, x + i) != 0 && My_map.get_map(y, x + i) != 2)
                break;
-            develop_bomb(5 + 20 + 40 * (i - 1), -20);
+            develop_bomb(5 + 20 + 30 * (i - 1), -20 + 5);
+            if(My_map.get_map(y, x + i) == 2)
+                change_map(y, x + i);
        }
        for(int i = 1; i <= range; i++)
        {
             //up
            if(My_map.get_map(y - i, x) != 0 && My_map.get_map(y - i, x) != 2)
                break;
-            develop_bomb(-20 + 5, -20 + (-40) * i);
+            develop_bomb(-20 + 5, -20 + (-35) * i);
+            if(My_map.get_map(y - i, x) == 2)
+                change_map(y - i, x);
        }
    }
    else if(wait_time > 180)
@@ -143,12 +153,12 @@ int Shooter::random_tool()
 void Shooter::change_map(int x, int y)
 {
     int random =  random_tool();
+    qDebug() << "随机数是" << random;
     if(random == speed_tool || random == range_tool || random == bomb_num_tool)
     {
         //新建一个gameObject然后把它挂到玩家的transform上面
         //或者是自己就是一个gameObject，然后自己也有transform，放进list里面，玩家捡到了就detach掉
         auto tool = new GameObject();
-
         if(random == speed_tool)
         {
             //获得加速道具
@@ -158,10 +168,17 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/speed.png")
                     .addToGameObject(tool);
+            tool->addComponent(new Transform);
+            auto tr = tool->getComponent<Transform>();
+            tr->setType(-1);
             //qDebug() << "1";
-            My_map.set_map(x, y, speed_tool);
+           // My_map.set_map(x, y, speed_tool);
+            //My_map.set_map(tr->pos().y() / 40, tr->pos().x() / 40, speed_tool);
+            //qDebug() << "真实位置" << tr->pos().x() << tr->pos().y();
             //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
+            //qDebug() << "我就不信了：" << tr->pos().y() / 40 << tr->pos().x() / 40 << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
             //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+            //qDebug() << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
         }
         else if(random == range_tool)
         {
@@ -171,10 +188,17 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/range.png")
                     .addToGameObject(tool);
-            //qDebug() << "2";
-            My_map.set_map(x, y, range_tool);
+            tool->addComponent(new Transform);
+            auto tr = tool->getComponent<Transform>();
+            tr->setType(-2);
+            qDebug() << "2";
+            //My_map.set_map(x, y, range_tool);
+            //My_map.set_map(tr->pos().y() / 40, tr->pos().x() / 40, range_tool);
+            //qDebug() << "真实位置" << tr->pos().x() << tr->pos().y();
+            //qDebug() << "我就不信了：" << tr->pos().y() / 40 << tr->pos().x() / 40 << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
             //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
             //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+            //qDebug() << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
         }
         else
         {
@@ -184,10 +208,18 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/num.png")
                     .addToGameObject(tool);
-            //qDebug() << "3";
-            My_map.set_map(x, y, bomb_num_tool);
-            //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
+            qDebug() << "3";
+            tool->addComponent(new Transform);
+            auto tr = tool->getComponent<Transform>();
+            tr->setType(-3);
+            //My_map.set_map(x, y, bomb_num_tool);
+            //qDebug() << bomb_num_tool;
+            //My_map.set_map(tr->pos().y(), tr->pos().x(), bomb_num_tool);
+            //qDebug() << "真实位置" << tr->pos().x() << tr->pos().y();
+            //qDebug() << "我就不信了：" << tr->pos().y() / 40 << tr->pos().x() / 40 << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
+            //qDebug() << "实际位置是" << tr->pos().y() / 40 << "," << tr->pos().x() / 40;
             //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
+            //qDebug() << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
         }
         attachGameObject(tool);
         tool->addComponent(new Transform);

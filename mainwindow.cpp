@@ -168,24 +168,24 @@ MainWindow::MainWindow(QWidget *parent)
                   ":/player2/image/Player2/p2_right.png");
 
   //初始化robot1
-  QString str3(":/robot1/image/Robot1/r1_down.png");
+  /*QString str3(":/robot1/image/Robot1/r1_down.png");
   QByteArray cpath3 = str3.toLocal8Bit();
   char*path3 = cpath3.data();
   init_robot(-1, path3,
              ":/robot1/image/Robot1/r1_up.png",
              ":/robot1/image/Robot1/r1_down.png",
              ":/robot1/image/Robot1/r1_left.png",
-             ":/robot1/image/Robot1/r1_right.png");
+             ":/robot1/image/Robot1/r1_right.png");*/
 
   //初始化robot2
-  QString str4(":/robot2/image/Robot2/r2_down.png");
+  /*QString str4(":/robot2/image/Robot2/r2_down.png");
   QByteArray cpath4 = str4.toLocal8Bit();
   char*path4 = cpath4.data();
   init_robot(-2, path4,
              ":/robot2/image/Robot2/r2_up.png",
              ":/robot2/image/Robot2/r2_down.png",
              ":/robot2/image/Robot2/r2_left.png",
-             ":/robot2/image/Robot2/r2_right.png");
+             ":/robot2/image/Robot2/r2_right.png");*/
 }
 
 MainWindow::~MainWindow() { delete ui; }

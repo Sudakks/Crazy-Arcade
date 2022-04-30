@@ -66,9 +66,11 @@ void UserController::onUpdate( float deltaTime ) {
             if(shoot->get_wait_time() >= 4 * 60)
             {
                 //表明这个炸弹已经要被销毁
+                qDebug() << trans->type();
                 if(trans->type() == this->transform->type())
                 {
                     //score += shoot->get_score();
+                    qDebug() << "现在是玩家的炸弹";
                     bomb_num++;
                     //说明是自己的炸弹
                     bomb_list.pop_front();//先从队列中移走
@@ -77,6 +79,7 @@ void UserController::onUpdate( float deltaTime ) {
                 else if(trans->type() < 0)
                 {
                     //第二种情况是机器人放的炸弹
+                    qDebug() << "现在是机器人的炸弹";
                     bomb_list.pop_front();//先从队列中移走
                     this->detachGameObject(shooter);
                 }
@@ -103,7 +106,9 @@ void UserController::onUpdate( float deltaTime ) {
         shooter->addComponent(new Component);
         shooter->addComponent(new ImageTransform);
         shooter->addComponent(new Transform);
-        shooter->addComponent(new Shooter(this->range, 0, transform));
+        //shooter->addComponent(new Ammo(this->transform->type()));
+        //这个好像不能用碰撞检测，因为没有item
+        shooter->addComponent(new Shooter(this->range, 0, this->transform->type()));
         //这个是调用userController的数据
         //这个炸弹也要和玩家一样具有相同的type,这样才好把分加上去
         auto trans = shooter->getComponent<Transform>();
@@ -271,28 +276,29 @@ bool UserController::judge_walk(float vx, float vy, int dir)
 
 void UserController::judge_tool(int x, int y)
 {
-    int now = My_map.get_map(x, y);
-    //qDebug() << x << "  "<< y;
-    if(now == speed_tool || now == bomb_num_tool || now == range_tool)
+    int now = 0;
+    auto begin = tool_list.begin();
+    for(int i = 0; i < tool_list.size(); i++)
     {
-        //利用队列查找位置
-        //qDebug() << tool_list.size();
-        auto begin = tool_list.begin();
-        for(int i = 0; i < tool_list.size(); i++)
+        GameObject* tool = tool_list.at(i);
+        auto pos = tool->getComponent<Transform>();
+        //qDebug() << "222真实位置" << pos->pos().x() << pos->pos().y();
+        //qDebug() <<"人物的位置是：" << x << "  "<< y << " " << now;
+        //qDebug() << "道具的位置是" << (int)pos->pos().y() / 40 << "  "<< (int)pos->pos().x() / 40;
+        //qDebug() << "在地图上显示的是：" << My_map.get_map(pos->pos().y() / 40, pos->pos().x() / 40);
+        if((int)(pos->pos().y() / 40) == x && (int)(pos->pos().x() / 40) == y)
         {
-            GameObject* tool = tool_list.at(i);
-            Transform* pos = tool->getComponent<Transform>();
-            //qDebug() << "道具的位置是" << pos->pos().y() / 40 << "  "<< pos->pos().x() / 40;
-            if(pos->pos().x() / 40 == y && pos->pos().y() / 40 == x)
-            {
-                //说明找到了这一个道具
-                //直接消除这一个gameObject
-                tool_list.erase(begin + i);//先从队列中移走
-                this->detachGameObject(tool);
-                break;
-            }
-
+            //说明找到了这一个道具
+            //直接消除这一个gameObject
+            now = pos->type();
+            tool_list.erase(begin + i);//先从队列中移走
+            this->detachGameObject(tool);
+            break;
         }
+    }
+    qDebug() <<"now = " <<now;
+    if(now < 0)
+    {
         if(now == speed_tool)
         {
             //qDebug() << "-1";
