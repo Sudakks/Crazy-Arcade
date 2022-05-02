@@ -152,20 +152,34 @@ MainWindow::MainWindow(QWidget *parent)
   QByteArray cpath1 = str1.toLocal8Bit();
   char*path1 = cpath1.data();//这一步是把QString转为char*类型
   init_player(1, path1, Qt::Key_W, Qt::Key_S, Qt::Key_A, Qt::Key_D, Qt::Key_Space,
-                  ":/player1/image/Player1/p1_up.png",
-                  ":/player1/image/Player1/p1_down.png",
-                  ":/player1/image/Player1/p1_left.png",
-                  ":/player1/image/Player1/p1_right.png");
+              ":/player1/image/Player1/p1_up1.png",
+              ":/player1/image/Player1/p1_up2.png",
+              ":/player1/image/Player1/p1_down1.png",
+              ":/player1/image/Player1/p1_down2.png",
+              ":/player1/image/Player1/p1_down3.PNG",
+              ":/player1/image/Player1/p1_left1.png",
+              ":/player1/image/Player1/p1_left2.png",
+              ":/player1/image/Player1/p1_left3.png",
+              ":/player1/image/Player1/p1_right1.png",
+              ":/player1/image/Player1/p1_right2.png",
+              ":/player1/image/Player1/p1_right3.png");
 
   //初始化player2
   QString str2(":/player2/image/Player2/p2_live.png");
   QByteArray cpath2 = str2.toLocal8Bit();
   char*path2 = cpath2.data();
   init_player(2, path2, Qt::Key_Up, Qt::Key_Down, Qt::Key_Left, Qt::Key_Right, Qt::Key_Return,
-                  ":/player2/image/Player2/p2_up.png",
-                  ":/player2/image/Player2/p2_down.png",
-                  ":/player2/image/Player2/p2_left.png",
-                  ":/player2/image/Player2/p2_right.png");
+              ":/player2/image/Player2/p2_up1.png",
+              ":/player2/image/Player2/p2_up2.png",
+              ":/player2/image/Player2/p2_down1.png",
+              ":/player2/image/Player2/p2_down2.png",
+              ":/player2/image/Player2/p2_down3.png",
+              ":/player2/image/Player2/p2_left1.png",
+              ":/player2/image/Player2/p2_left2.png",
+              ":/player2/image/Player2/p2_left3.png",
+              ":/player2/image/Player2/p2_right1.png",
+              ":/player2/image/Player2/p2_right2.png",
+              ":/player2/image/Player2/p2_right3.png");
 
   //初始化robot1
   /*QString str3(":/robot1/image/Robot1/r1_down.png");
@@ -190,7 +204,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right)
+void MainWindow::init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up1, QString up2, QString down1, QString down2, QString down3, QString left1, QString left2, QString left3, QString right1, QString right2, QString right3)
 {
     while(1)
     {
@@ -206,7 +220,7 @@ void MainWindow::init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_
                     .addToGameObject(player);
             player->addComponent(new Hitable);
             player->addComponent(new Physics());
-            player->addComponent(new UserController(1, 1, 1, key_up, key_down, key_left, key_right, key_bomb, up, down, left, right));//玩家的相关数据的初始化
+            player->addComponent(new UserController(1, 1, 1, key_up, key_down, key_left, key_right, key_bomb, up1, up2, down1, down2, down3, left1, left2, left3, right1, right2, right3));//玩家的相关数据的初始化
             player->addComponent(new ImageTransform);
             gameScene->attachGameObject(player);
             auto user = player->getComponent<UserController>();

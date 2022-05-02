@@ -53,20 +53,34 @@
         <file>image/Bomb2/33.png</file>
     </qresource>
     <qresource prefix="/player1">
+        <file>image/Player1/p1_down1.png</file>
+        <file>image/Player1/p1_down2.png</file>
+        <file>image/Player1/p1_down3.PNG</file>
+        <file>image/Player1/p1_left1.png</file>
+        <file>image/Player1/p1_left2.png</file>
+        <file>image/Player1/p1_left3.png</file>
+        <file>image/Player1/p1_right1.png</file>
+        <file>image/Player1/p1_right2.png</file>
+        <file>image/Player1/p1_right3.png</file>
+        <file>image/Player1/p1_up1.png</file>
+        <file>image/Player1/p1_up2.png</file>
         <file>image/Player1/p1_die.png</file>
-        <file>image/Player1/p1_down.png</file>
-        <file>image/Player1/p1_left.png</file>
         <file>image/Player1/p1_live.png</file>
-        <file>image/Player1/p1_right.png</file>
-        <file>image/Player1/p1_up.png</file>
     </qresource>
     <qresource prefix="/player2">
         <file>image/Player2/p2_die.png</file>
-        <file>image/Player2/p2_down.png</file>
-        <file>image/Player2/p2_left.png</file>
         <file>image/Player2/p2_live.png</file>
-        <file>image/Player2/p2_right.png</file>
-        <file>image/Player2/p2_up.png</file>
+        <file>image/Player2/p2_down1.png</file>
+        <file>image/Player2/p2_down2.png</file>
+        <file>image/Player2/p2_down3.png</file>
+        <file>image/Player2/p2_left1.png</file>
+        <file>image/Player2/p2_left2.png</file>
+        <file>image/Player2/p2_left3.png</file>
+        <file>image/Player2/p2_right1.png</file>
+        <file>image/Player2/p2_right2.png</file>
+        <file>image/Player2/p2_right3.png</file>
+        <file>image/Player2/p2_up1.png</file>
+        <file>image/Player2/p2_up2.png</file>
     </qresource>
     <qresource prefix="/flash">
         <file>image/Flash/1.png</file>

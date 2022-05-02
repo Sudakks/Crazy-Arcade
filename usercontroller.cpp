@@ -11,8 +11,9 @@
 #include "component.h"
 #include "ammo.h"
 #include "gameobject.h"
+#include <QRandomGenerator>
 
-UserController::UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up, QString down, QString left, QString right)
+UserController::UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up1, QString up2, QString down1, QString down2, QString down3, QString left1, QString left2, QString left3, QString right1, QString right2, QString right3)
 {
     this->speed = speed;
     this->range = range;
@@ -24,10 +25,10 @@ UserController::UserController (int speed, float range, int bomb_num, Qt::Key ke
     this->key_right = key_right;
     this->key_bomb = key_bomb;
 
-    this->up_image = up;
-    this->down_image = down;
-    this->left_image = left;
-    this->right_image = right;
+    this->up1 = up1, this->up2 = up2;
+    this->down1 = down1, this->down2 = down2, this->down3 = down3;
+    this->right1 = right1, this->right2 = right2, this->right3 = right3;
+    this->left1 = left1, this->left2 = left2, this->left3 = left3;
 }
 
 void UserController::onAttach () {
@@ -120,28 +121,50 @@ void UserController::onUpdate( float deltaTime ) {
     {
         if (getKey(key_left) )
         {
-           imageTransform->setImage(left_image);
+            left_num = (left_num + 1) % 31;
+            if(left_num <= 10)
+            imageTransform->setImage(left1);
+            else if(left_num > 10 && left_num <= 20)
+                imageTransform->setImage(left2);
+            else if(left_num > 20 && left_num <= 30)
+                imageTransform->setImage(left3);
            if(judge_walk(-35 * speed, 0, 1))
                vx -= 35 * speed;
            //qDebug() << "vxA = " << vx;
         }
         if (getKey(key_right) )
         {
-            imageTransform->setImage(right_image);
+            right_num = (right_num + 1) % 31;
+            if(right_num <= 10)
+            imageTransform->setImage(right1);
+            else if(right_num > 10 && right_num <= 20)
+                imageTransform->setImage(right2);
+            else if(right_num > 20 && right_num <= 30)
+                imageTransform->setImage(right3);
             if(judge_walk(35 * speed, 0, 2))
                 vx += 35 * speed;
             //qDebug() << "vxD = " << vx;
         }
         if (getKey(key_up) )
         {
-            imageTransform->setImage(up_image);
+            up_num = (up_num + 1) % 21;
+            if(up_num <= 10)
+            imageTransform->setImage(up1);
+            else if(up_num > 10 && up_num <= 20)
+                imageTransform->setImage(up2);
             if(judge_walk(0, -35 * speed, 3))
                 vy -= 35 * speed;
             //qDebug() << "vyW = " << vy;
         }
         if (getKey(key_down) )
         {
-            imageTransform->setImage(down_image);
+            down_num = (down_num + 1) % 31;
+            if(down_num <= 10)
+            imageTransform->setImage(down1);
+            else if(down_num > 10 && down_num <= 20)
+                imageTransform->setImage(down2);
+            else if(down_num > 20 && down_num <= 30)
+                imageTransform->setImage(down3);
             if(judge_walk(0, 35 * speed, 4))
                 vy += 35 * speed;
             //qDebug() << "vyS = " << vy;
