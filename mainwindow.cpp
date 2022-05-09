@@ -19,6 +19,7 @@
 #include "imagetransform.h"
 #include "common.h"
 #include "aicontroller.h"
+#include "health.h"
 
 void loadScene(GameScene *gameScene) {
   //加载地图图片
@@ -182,24 +183,32 @@ MainWindow::MainWindow(QWidget *parent)
               ":/player2/image/Player2/p2_right3.png");
 
   //初始化robot1
-  /*QString str3(":/robot1/image/Robot1/r1_down.png");
+  QString str3(":/robot1/image/Robot1/r1_down1.png");
   QByteArray cpath3 = str3.toLocal8Bit();
   char*path3 = cpath3.data();
   init_robot(-1, path3,
-             ":/robot1/image/Robot1/r1_up.png",
-             ":/robot1/image/Robot1/r1_down.png",
-             ":/robot1/image/Robot1/r1_left.png",
-             ":/robot1/image/Robot1/r1_right.png");*/
+             ":/robot1/image/Robot1/r1_up1.png",
+             ":/robot1/image/Robot1/r1_up2.png",
+             ":/robot1/image/Robot1/r1_down1.png",
+             ":/robot1/image/Robot1/r1_down2.png",
+             ":/robot1/image/Robot1/r1_left1.png",
+             ":/robot1/image/Robot1/r1_left2.png",
+             ":/robot1/image/Robot1/r1_right1.png",
+             ":/robot1/image/Robot1/r1_right2.png");
 
   //初始化robot2
-  /*QString str4(":/robot2/image/Robot2/r2_down.png");
+  QString str4(":/robot2/image/Robot2/r2_down1.png");
   QByteArray cpath4 = str4.toLocal8Bit();
   char*path4 = cpath4.data();
   init_robot(-2, path4,
-             ":/robot2/image/Robot2/r2_up.png",
-             ":/robot2/image/Robot2/r2_down.png",
-             ":/robot2/image/Robot2/r2_left.png",
-             ":/robot2/image/Robot2/r2_right.png");*/
+             ":/robot2/image/Robot2/r2_up1.png",
+             ":/robot2/image/Robot2/r2_up2.png",
+             ":/robot2/image/Robot2/r2_down1.png",
+             ":/robot2/image/Robot2/r2_down2.png",
+             ":/robot2/image/Robot2/r2_left1.png",
+             ":/robot2/image/Robot2/r2_left2.png",
+             ":/robot2/image/Robot2/r2_right1.png",
+             ":/robot2/image/Robot2/r2_right2.png");
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -218,10 +227,10 @@ void MainWindow::init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(photo)
                     .addToGameObject(player);
-            player->addComponent(new Hitable);
             player->addComponent(new Physics());
             player->addComponent(new UserController(1, 1, 1, key_up, key_down, key_left, key_right, key_bomb, up1, up2, down1, down2, down3, left1, left2, left3, right1, right2, right3));//玩家的相关数据的初始化
             player->addComponent(new ImageTransform);
+            player->addComponent(new Health(3));
             gameScene->attachGameObject(player);
             auto user = player->getComponent<UserController>();
             user->set_tool_speed(0);//设置初始的速度
@@ -234,7 +243,7 @@ void MainWindow::init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_
     }
 }
 
-void MainWindow::init_robot(int type, char *photo, QString up, QString down, QString left, QString right)
+void MainWindow::init_robot(int type, char *photo, QString up1, QString up2, QString down1, QString down2, QString left1, QString left2, QString right1, QString right2)
 {
     while(1)
     {
@@ -248,9 +257,9 @@ void MainWindow::init_robot(int type, char *photo, QString up, QString down, QSt
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(photo)
                     .addToGameObject(robot);
-            robot->addComponent(new Hitable);
+            robot->addComponent(new Health(1));
             robot->addComponent(new Physics());
-            robot->addComponent(new AIcontroller(up, down, left, right));//玩家的相关数据的初始化
+            robot->addComponent(new AIcontroller(up1, up2, down1, down2, left1, left2, right1, right2));//玩家的相关数据的初始化
             robot->addComponent(new ImageTransform);
             auto trans = robot->getComponent<Transform>();
             trans->setType(type);

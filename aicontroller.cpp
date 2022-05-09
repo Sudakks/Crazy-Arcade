@@ -7,13 +7,14 @@
 #include "shooter.h"
 #include <QDebug>
 #include "ammo.h"
+#include <QString>
 
-AIcontroller::AIcontroller(QString up, QString down, QString left, QString right)
+AIcontroller::AIcontroller(QString up1, QString up2, QString down1, QString down2, QString left1, QString left2, QString right1, QString right2)
 {
-    this->up_image = up,
-    this->down_image = down,
-    this->left_image = left,
-    this->right_image = right;
+    this->up1 = up1, this->up2 = up2;
+    this->down1 = down1, this->down2 = down2;
+    this->left1 = left1, this->left2 = left2;
+    this->right1 = right1, this->right2 = right2;
 }
 
 void AIcontroller::onAttach()
@@ -53,55 +54,35 @@ void AIcontroller::onUpdate(float deltaTime)
     }
     else if(interval <= 0)
     {
-        into2 = true;
-        qDebug() << "2";
+        //qDebug() << "判断放炸弹";
         //这个表示到了放炸弹的时间,开始放炸弹（设计几条路线然后判断是否有余地放炸弹）
         int mapX = X / 40;
         int mapY = Y / 40;
         bool flag = false;
-        if(My_map.get_map(mapY - 1, mapX) <= 0 && My_map.get_map(mapY - 2, mapX) <= 0)
+        if(last_dir == UP && My_map.get_map(mapY - 1, mapX) <= 0 && My_map.get_map(mapY - 2, mapX) <= 0)
         {
             //case1
             //可以释放炸弹
             flag = true;
         }
-        else if(My_map.get_map(mapY + 1, mapX) <= 0 && My_map.get_map(mapY + 2, mapX) <= 0)
+        else if(last_dir == DOWN && My_map.get_map(mapY + 1, mapX) <= 0 && My_map.get_map(mapY + 2, mapX) <= 0)
         {
             //case2
             flag = true;
         }
-        else if(My_map.get_map(mapY, mapX - 1) <= 0 && My_map.get_map(mapY, mapX - 2) <= 0)
+        else if(last_dir == LEFT && My_map.get_map(mapY, mapX - 1) <= 0 && My_map.get_map(mapY, mapX - 2) <= 0)
         {
             //case3
             flag = true;
         }
-        else if(My_map.get_map(mapY, mapX + 1) <= 0 && My_map.get_map(mapY, mapX + 2) <= 0)
+        else if(last_dir == RIGHT && My_map.get_map(mapY, mapX + 1) <= 0 && My_map.get_map(mapY, mapX + 2) <= 0)
         {
             //case4
             flag = true;
         }
-        else if(My_map.get_map(mapY - 1, mapX) <= 0 && My_map.get_map(mapY - 1, mapX + 1) <= 0)
-        {
-            //case5(上+右)
-            flag = true;
-        }
-        else if(My_map.get_map(mapY + 1, mapX) <= 0 && My_map.get_map(mapY + 1, mapX - 1) <= 0)
-        {
-            //case6(下+左)
-            flag = true;
-        }
-        else if(My_map.get_map(mapY, mapX - 1) <= 0 && My_map.get_map(mapY - 1, mapX - 1) <= 0)
-        {
-            //case7(左+上)
-            flag = true;
-        }
-        else if(My_map.get_map(mapY, mapX + 1) <= 0 && My_map.get_map(mapY - 1, mapX + 1) <= 0)
-        {
-            //case8(右+上)
-            flag = true;
-        }
         if(flag == true)
         {
+            into2 = true;
             //表示有地方可以用来放炸弹
             whether_bomb = 1;
             bomb_time = 4 * 60;
@@ -116,7 +97,9 @@ void AIcontroller::onUpdate(float deltaTime)
             bomb->addComponent(new ImageTransform);
             bomb->addComponent(new Transform);
             auto position = bomb->getComponent<Transform>();
-            bombX = position->pos().x(), bombY = position->pos().y();
+            //qDebug() << "实际的炸弹位置" << position->pos().x() << position->pos().y();
+            bomb_x = this->transform->pos().x(), bomb_y = this->transform->pos().y();
+            //qDebug() << "我设定的位置" << bomb_x << bomb_y;
             bomb->addComponent(new Shooter(this->range, 0, this->transform->type()));//这个是调用userController的数据
             this->attachGameObject(bomb);
         }
@@ -127,22 +110,26 @@ void AIcontroller::onUpdate(float deltaTime)
     }
 }
 
-bool AIcontroller::out_of_range(float vx, float vy)
+bool AIcontroller::out_of_range(double vx, double vy, int dir)
 {
     //这个是用来判断机器人是否走到了炸弹的范围里
-    float x = this->transform->pos().x();
-    float y = this->transform->pos().y();
-    float deltaTime = 1 / 60;
-    x += vx * deltaTime, y += vy * deltaTime;
+    double x = this->transform->pos().x() + 0.0166 * vx;
+    double y = this->transform->pos().y() + 0.0166 * vy;
+    if(dir == DOWN)
+        y += 38.0000;
+    else if(dir == RIGHT)
+        x += 32.0000;
     //炸弹的尺寸大概35左右
     int flag1 = 0, flag2 = 0;//分别表示x和y上的
-    if(x >= bomb_x - 5 - 30 || x <= bomb_x + 5 + 30)
+    //qDebug() << "x上的范围是" << bomb_x - 5.0000 - 30.0000 << "~" << bomb_x + 5.0000 + 30.0000 + 35.0000;
+    //qDebug() << "y上的范围是" << bomb_y - 3.0000 - 35.0000 << "~" << bomb_y + 3.0000 + 35.0000 + 35.0000;
+    if(x >= bomb_x - 5.0000 - 30.0000 && x <= bomb_x + 5.0000 + 30.0000 + 35.0000)
         flag1 = 1;
-    if(y <= bomb_y - 3 - 35 || y >= bomb_y + 3 + 35)
+    if(y >= bomb_y - 3.0000 - 35.0000 && y <= bomb_y + 3.0000 + 35.0000 + 35.0000)
         flag2 = 1;
     if(flag1 && flag2)
         return false;
-    qDebug() << "不在范围里";
+    //qDebug() << "不在范围里";
     return true;
 }
 
@@ -159,13 +146,13 @@ bool AIcontroller::judge(float vx, float vy, int dir)
     //
     float left_x = this->transform->pos().x();
     float up_y = this->transform->pos().y();
-    float right_x = left_x + wall_w;
-    float down_y = up_y + wall_h;
+    float right_x = left_x + 37;
+    float down_y = up_y + 37;
     float half_y = (up_y + down_y) / 2;
     //
     int up_Y = up_y / wall_h;
     int half_Y = half_y / wall_h;
-    if(dir == 2)
+    if(dir == LEFT)
     {
         //left
         x = left_x;
@@ -181,7 +168,7 @@ bool AIcontroller::judge(float vx, float vy, int dir)
             y -= offset;
         }
     }
-    else if(dir == 4)
+    else if(dir == RIGHT)
     {
         //right
         x = right_x;
@@ -197,7 +184,7 @@ bool AIcontroller::judge(float vx, float vy, int dir)
             y -= offset;
         }
     }
-    else if(dir == 1)
+    else if(dir == UP)
     {
         //up
         y = up_y;
@@ -234,82 +221,85 @@ bool AIcontroller::judge(float vx, float vy, int dir)
     }
 }
 
-bool AIcontroller::distance(float vx, float vy, float dis)
+bool AIcontroller::distance(double vx, double vy)
 {
     //这个用来判断机器人是否与炸弹的范围越来越远
-    float x = this->transform->pos().x();
-    float y = this->transform->pos().y();
-    float deltaTime = 1 / 60;
-    x += vx * deltaTime, y += vy * deltaTime;
-    float dis_now = (x - bomb_x) * (x - bomb_x) + (y - bomb_y) * (y - bomb_y);
-    if(dis_now >= dis)
+    double x = this->transform->pos().x() + 0.0001;
+    double y = this->transform->pos().y() + 0.0001;
+    //qDebug() << "x的改变为" << fabs(x - bomb_x) << fabs(x + vx * 0.0166 - bomb_x);
+    //qDebug() << "y的改变为" << fabs(y - bomb_y) << fabs(y + vy * 0.0166 - bomb_y);
+    if(fabs(x - bomb_x) < fabs(x + vx * 0.0166 - bomb_x) || fabs(y - bomb_y) < fabs(y + vy * 0.0166 - bomb_y))
     {
-        qDebug() << "距离变大了";
+        //qDebug() << "距离变大了";
         return true;
     }
     return false;
 }
+
 void AIcontroller::free_walk()
 {
     float vx = 0, vy = 0;
     qDebug() << "------------";
-    //qDebug() << "free walk";
+    qDebug() << "free walk";
     quint32 dir = (QRandomGenerator::global()->generate()) % 4 + 1;
     //这是利用随机数版本
-    if(last_dir == 1)
+    if(last_dir == UP)
     {
         //up
-        if(judge(0, -30 * speed, 1))
+        if(judge(0, -30 * speed, UP))
         {
             vy -= 30 * speed;
-            //qDebug() << "继续up";
-            imageTransform->setImage(up_image);
-            goto end;
+            change_image(UP);
+            qDebug() << "继续up";
+            physics->setVelocity(vx, vy);
+            return;
         }
     }
-    else if(last_dir == 2)
+    else if(last_dir == LEFT)
     {
         //left
-        if(judge(-30 * speed, 0, 2))
+        if(judge(-30 * speed, 0, LEFT))
         {
             vx -= 30 * speed;
-            //qDebug() << "继续left";
-            imageTransform->setImage(left_image);
-            goto end;
+            change_image(LEFT);
+            qDebug() << "继续left";
+            physics->setVelocity(vx, vy);
+            return;
         }
     }
-    else if(last_dir == 4)
+    else if(last_dir == RIGHT)
     {
         //right
-        if(judge(30 * speed, 0, 4))
+        if(judge(30 * speed, 0, RIGHT))
         {
             vx += 30 * speed;
-            //qDebug() << "继续right";
-            imageTransform->setImage(right_image);
-            goto end;
+            change_image(RIGHT);
+            qDebug() << "继续right";
+            physics->setVelocity(vx, vy);
+            return;
         }
     }
-    else if(last_dir == 3)
+    else if(last_dir == DOWN)
     {
         //down
-        if(judge(0, 30 * speed, 3))
+        if(judge(0, 30 * speed, DOWN))
         {
             vy += 30 * speed;
-            //qDebug() << "继续down";
-            imageTransform->setImage(down_image);
-            goto end;
+            change_image(DOWN);
+            qDebug() << "继续down";
+            physics->setVelocity(vx, vy);
+            return;
         }
     }
-
     if(dir == 1)
     {
         //up
-        if(judge(0, -30 * speed, 1))
+        if(judge(0, -30 * speed, UP))
         {
+            qDebug() << "判断能up";
             vy -= 30 * speed;
-            imageTransform->setImage(up_image);
-            //qDebug() << "最后是up";
-            last_dir = 1;
+            change_image(UP);
+            last_dir = UP;
         }
         else
             dir++;
@@ -317,12 +307,12 @@ void AIcontroller::free_walk()
     if(dir == 2)
     {
         //left
-        if(judge(-30 * speed, 0, 2))
+        if(judge(-30 * speed, 0, LEFT))
         {
+            qDebug() << "判断能left";
             vx -= 30 * speed;
-            imageTransform->setImage(left_image);
-            //qDebug() << "最后是left";
-            last_dir = 2;
+            change_image(LEFT);
+            last_dir = LEFT;
         }
         else
             dir++;
@@ -330,12 +320,12 @@ void AIcontroller::free_walk()
     if(dir == 3)
     {
         //down
-        if(judge(0, 30 * speed, 3))
+        if(judge(0, 30 * speed, DOWN))
         {
+            qDebug() << "判断能down";
             vy += 30 * speed;
-            imageTransform->setImage(down_image);
-            //qDebug() << "最后是down";
-            last_dir = 3;
+            change_image(DOWN);
+            last_dir = DOWN;
         }
         else
             dir++;
@@ -343,81 +333,111 @@ void AIcontroller::free_walk()
     if(dir == 4)
     {
         //right
-        if(judge(30 * speed, 0, 4))
+        if(judge(30 * speed, 0, RIGHT))
         {
+            qDebug() << "判断能right";
             vx += 30 * speed;
-            imageTransform->setImage(right_image);
-            //qDebug() << "最后是right";
-            last_dir = 4;
+            change_image(RIGHT);
+            last_dir = RIGHT;
         }
     }
-    //
-    end: physics->setVelocity(vx, vy);
-    //qDebug() << vx << vy;
+    qDebug() << "设置速度为" << vx << vy;
+    physics->setVelocity(vx, vy);
 }
 
 void AIcontroller::bomb_walk()
 {
     //这个是在有炸弹的时候的行走
     float vx = 0, vy = 0;
-    float x = this->transform->pos().x();
-    float y = this->transform->pos().y();
-    float dis = (x - bomb_x) * (x - bomb_x) + (y - bomb_y) * (bomb_y);
-    //up1, left2, down3, right4
     //规避炸弹再结合judge的逻辑进行判断
     quint32 dir = (QRandomGenerator::global()->generate()) % 4 + 1;
-    if(last_dir == 1)
+    if(last_dir == UP)
     {
-        if(judge(0, -30 * speed, 1) && (out_of_range(0, -30 * speed) || distance(0, -30 * speed, dis)))
+        if(judge(0, -30 * speed, UP) && (distance(0, -30 * speed) || out_of_range(0, -30 * speed, UP)))
         {
+            /*if(distance(0, -30 * speed))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(0, -30 * speed))
+            {
+                qDebug() << "是第二个";
+            }*/
             vy -= 30 * speed;
-            //qDebug() << "继续up";
-            imageTransform->setImage(up_image);
+            change_image(UP);
             goto end;
         }
     }
-    else if(last_dir == 2)
+    else if(last_dir == LEFT)
     {
         //left
-        if(judge(-30 * speed, 0, 2) && (out_of_range(-30 * speed, 0) || distance(-30 * speed, 0, dis)))
+        if(judge(-30 * speed, 0, LEFT) && ( distance(-30 * speed, 0) || out_of_range(-30 * speed, 0, LEFT)))
         {
+            /*if(distance(-30 * speed, 0))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(-30 * speed, 0))
+            {
+                qDebug() << "是第二个";
+            }*/
             vx -= 30 * speed;
-            //qDebug() << "继续left";
-            imageTransform->setImage(left_image);
+            change_image(LEFT);
             goto end;
         }
     }
-    else if(last_dir == 4)
+    else if(last_dir == RIGHT)
     {
         //right
-        if(judge(30 * speed, 0, 4) && (out_of_range(30 * speed, 0) || distance(30 * speed, 0, dis)))
+        if(judge(30 * speed, 0, RIGHT) && ( distance(30 * speed, 0) || out_of_range(30 * speed, 0, RIGHT)))
         {
+            /*if(distance(30 * speed, 0))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(30 * speed, 0))
+            {
+                qDebug() << "是第二个";
+            }*/
             vx += 30 * speed;
-            //qDebug() << "继续right";
-            imageTransform->setImage(right_image);
+            change_image(RIGHT);
             goto end;
         }
     }
-    else if(last_dir == 3)
+    else if(last_dir == DOWN)
     {
         //down
-        if(judge(0, 30 * speed, 3) && (out_of_range(0, 30 * speed) || distance(0, 30 * speed, dis)))
+        if(judge(0, 30 * speed, DOWN) && ( distance(0, 30 * speed) || out_of_range(0, 30 * speed, DOWN)))
         {
+            /*if(distance(0, 30 * speed))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(0, 30 * speed))
+            {
+                qDebug() << "是第二个";
+            }*/
             vy += 30 * speed;
-            //qDebug() << "继续down";
-            imageTransform->setImage(down_image);
+            change_image(DOWN);
             goto end;
         }
     }
     if(dir == 1)
     {
         //up
-        if(judge(0, -30 * speed, 1) && (out_of_range(0, -30 * speed) || distance(0, -30 * speed, dis)))
+        if(judge(0, -30 * speed, UP) && ( distance(0, -30 * speed) || out_of_range(0, -30 * speed, UP)))
         {
+            /*if(distance(0, -30 * speed))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(0, -30 * speed))
+            {
+                qDebug() << "是第二个";
+            }*/
             vy -= 30 * speed;
-            imageTransform->setImage(up_image);
-            //qDebug() << "最后是up";
-            last_dir = 1;
+            change_image(UP);
+            last_dir = UP;
         }
         else
             dir++;
@@ -425,12 +445,20 @@ void AIcontroller::bomb_walk()
     if(dir == 2)
     {
         //left
-        if(judge(-30 * speed, 0, 2) && (out_of_range(-30 * speed, 0) || distance(-30 * speed, 0, dis)))
+        if(judge(-30 * speed, 0, LEFT) && ( distance(-30 * speed, 0) || out_of_range(-30 * speed, 0, LEFT)))
         {
+            /*if(distance(-30 * speed, 0))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(-30 * speed, 0))
+            {
+                qDebug() << "是第二个";
+            }*/
             vx -= 30 * speed;
-            imageTransform->setImage(left_image);
+            change_image(LEFT);
             //qDebug() << "最后是left";
-            last_dir = 2;
+            last_dir = LEFT;
         }
         else
             dir++;
@@ -438,12 +466,19 @@ void AIcontroller::bomb_walk()
     if(dir == 3)
     {
         //down
-        if(judge(0, 30 * speed, 3) && (out_of_range(0, 30 * speed) || distance(0, 30 * speed, dis)))
+        if(judge(0, 30 * speed, DOWN) && ( distance(0, 30 * speed) || out_of_range(0, 30 * speed, DOWN)))
         {
+            /*if(distance(0, 30 * speed))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(0, 30 * speed))
+            {
+                qDebug() << "是第二个";
+            }*/
             vy += 30 * speed;
-            imageTransform->setImage(down_image);
-            //qDebug() << "最后是down";
-            last_dir = 3;
+            change_image(DOWN);
+            last_dir = DOWN;
         }
         else
             dir++;
@@ -451,13 +486,61 @@ void AIcontroller::bomb_walk()
     if(dir == 4)
     {
         //right
-        if(judge(30 * speed, 0, 4) && (out_of_range(30 * speed, 0) || distance(30 * speed, 0, dis)))
+        if(judge(30 * speed, 0, RIGHT) && ( distance(30 * speed, 0) || out_of_range(30 * speed, 0, RIGHT)))
         {
+            /*if(distance(30 * speed, 0))
+            {
+                qDebug() << "是第一个";
+            }
+            if(out_of_range(30 * speed, 0))
+            {
+                qDebug() << "是第二个";
+            }*/
             vx += 30 * speed;
-            imageTransform->setImage(right_image);
-            //qDebug() << "最后是right";
-            last_dir = 4;
+            change_image(RIGHT);
+            last_dir = RIGHT;
         }
     }
+
     end: physics->setVelocity(vx, vy);
+}
+
+void AIcontroller::change_image(int dir)
+{
+    if(dir == UP)
+    {
+        //up
+        up_num = (up_num + 1) % 40 + 1;
+        if(up_num <= 20)
+            this->imageTransform->setImage(up1);
+        else
+            this->imageTransform->setImage(up2);
+    }
+    else if(dir == LEFT)
+    {
+        //left
+        left_num = (left_num + 1) % 40 + 1;
+        if(left_num <= 20)
+            this->imageTransform->setImage(left1);
+        else
+            this->imageTransform->setImage(left2);
+    }
+    else if(dir ==  DOWN)
+    {
+        //down
+        down_num = (down_num + 1) % 40 + 1;
+        if(down_num <= 20)
+            this->imageTransform->setImage(down1);
+        else
+            this->imageTransform->setImage(down2);
+    }
+    else
+    {
+        //right 4
+        right_num = (right_num + 1) % 40 + 1;
+        if(right_num <= 20)
+            this->imageTransform->setImage(right1);
+        else
+            this->imageTransform->setImage(right2);
+    }
 }

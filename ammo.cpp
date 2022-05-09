@@ -20,7 +20,6 @@ void Ammo::onUpdate(float deltaTime) {
     timeToLive--;
   if (timeToLive <= 0) {
     destory(this->gameObject);
-    //qDebug() << "de";
   }
   for (auto item : this->collider->collidingItems()) {//与它碰撞的东西
     while (item->parentItem() != nullptr) item = item->parentItem();

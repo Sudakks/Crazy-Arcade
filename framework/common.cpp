@@ -15,4 +15,5 @@ int robot2_type = -2;
 QList<GameObject*> bomb_list;//即对于地图上的所有炸弹都是这样处理的
 int p1_score = 0;
 int p2_score = 0;
+int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
 //这个是用来挂各种item类的图片

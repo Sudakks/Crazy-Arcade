@@ -3,9 +3,7 @@
         <file>image/Bomb1/1.png</file>
         <file>image/Bomb1/2.png</file>
         <file>image/Bomb1/3.png</file>
-        <file>image/Bomb1/11.png</file>
-        <file>image/Bomb1/22.png</file>
-        <file>image/Bomb1/33.png</file>
+        <file>image/Bomb1/transparency.png</file>
     </qresource>
     <qresource prefix="/tool">
         <file>image/Tool/num.png</file>
@@ -25,24 +23,26 @@
         <file>image/Map/dizhuan.png</file>
     </qresource>
     <qresource prefix="/robot1">
-        <file>image/Robot1/r1_die1.png</file>
-        <file>image/Robot1/r1_die2.png</file>
-        <file>image/Robot1/r1_die3.png</file>
-        <file>image/Robot1/r1_die4.png</file>
-        <file>image/Robot1/r1_down.png</file>
-        <file>image/Robot1/r1_left.png</file>
-        <file>image/Robot1/r1_right.png</file>
-        <file>image/Robot1/r1_up.png</file>
+        <file>image/Robot1/r1_down1.png</file>
+        <file>image/Robot1/r1_down2.png</file>
+        <file>image/Robot1/r1_left1.png</file>
+        <file>image/Robot1/r1_left2.png</file>
+        <file>image/Robot1/r1_right1.png</file>
+        <file>image/Robot1/r1_right2.png</file>
+        <file>image/Robot1/r1_up1.png</file>
+        <file>image/Robot1/r1_up2.png</file>
+        <file>image/Robot1/r1_die.png</file>
     </qresource>
     <qresource prefix="/robot2">
-        <file>image/Robot2/r2_die1.png</file>
-        <file>image/Robot2/r2_die2.png</file>
-        <file>image/Robot2/r2_die3.png</file>
-        <file>image/Robot2/r2_die4.png</file>
-        <file>image/Robot2/r2_down.png</file>
-        <file>image/Robot2/r2_left.png</file>
-        <file>image/Robot2/r2_right.png</file>
-        <file>image/Robot2/r2_up.png</file>
+        <file>image/Robot2/r2_die.png</file>
+        <file>image/Robot2/r2_down1.png</file>
+        <file>image/Robot2/r2_down2.png</file>
+        <file>image/Robot2/r2_left1.png</file>
+        <file>image/Robot2/r2_left2.png</file>
+        <file>image/Robot2/r2_right1.png</file>
+        <file>image/Robot2/r2_right2.png</file>
+        <file>image/Robot2/r2_up1.png</file>
+        <file>image/Robot2/r2_up2.png</file>
     </qresource>
     <qresource prefix="/bomb2">
         <file>image/Bomb2/1.png</file>

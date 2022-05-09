@@ -15,7 +15,6 @@ Shooter::Shooter(float range, float wait_time, int userType) : Component() {
     this->range = range;
     this->wait_time = wait_time;
     this->type = userType;
-    //this->userTransform = userTransform;//这个获取到了放炸弹的人的transform
     //所以我可以把道具的图片放到这个transform上面
 }
 
@@ -36,6 +35,18 @@ void Shooter::onUpdate(float deltaTime) {
        //随机数生成道具
        float x = this->transform->pos().x() / 40;
        float y = this->transform->pos().y() / 40;
+       //直接在这个位置加上一个碰撞检测？
+       auto ammo = new GameObject();
+       ammo->addComponent(new Transform);
+       ammo->addComponent(new Ammo(this->transform->type()));
+       auto amm = ammo->getComponent<Ammo>();
+       auto flash = new QGraphicsPixmapItem(this->transform);
+       flash->setPixmap(QPixmap(":/bomb1/image/Bomb1/transparency.png"));
+       flash->setPos(0, 0);//这个是以图片的中心点的位置发射
+       flash->setOffset(-15, -25);
+       //this->flash_list.emplace_back(flash);
+       amm->set_collider(flash);
+       attachGameObject(ammo);
        for(int i = 1; i <= range; i++)
        {
            //四个方向(down)
@@ -146,14 +157,14 @@ int Shooter::get_score()
 
 int Shooter::random_tool()
 {
-    quint32 pr = (QRandomGenerator::global()->generate()) % 7;
+    quint32 pr = (QRandomGenerator::global()->generate()) % 8;
     return -pr;
 }
 
 void Shooter::change_map(int x, int y)
 {
     int random =  random_tool();
-    qDebug() << "随机数是" << random;
+    //qDebug() << "随机数是" << random;
     if(random == speed_tool || random == range_tool || random == bomb_num_tool)
     {
         //新建一个gameObject然后把它挂到玩家的transform上面
@@ -191,7 +202,7 @@ void Shooter::change_map(int x, int y)
             tool->addComponent(new Transform);
             auto tr = tool->getComponent<Transform>();
             tr->setType(-2);
-            qDebug() << "2";
+            //qDebug() << "2";
             //My_map.set_map(x, y, range_tool);
             //My_map.set_map(tr->pos().y() / 40, tr->pos().x() / 40, range_tool);
             //qDebug() << "真实位置" << tr->pos().x() << tr->pos().y();
@@ -208,7 +219,7 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/num.png")
                     .addToGameObject(tool);
-            qDebug() << "3";
+            //qDebug() << "3";
             tool->addComponent(new Transform);
             auto tr = tool->getComponent<Transform>();
             tr->setType(-3);

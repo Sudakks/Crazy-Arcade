@@ -70,7 +70,6 @@ void UserController::onUpdate( float deltaTime ) {
                 qDebug() << trans->type();
                 if(trans->type() == this->transform->type())
                 {
-                    //score += shoot->get_score();
                     qDebug() << "现在是玩家的炸弹";
                     bomb_num++;
                     //说明是自己的炸弹
@@ -80,7 +79,6 @@ void UserController::onUpdate( float deltaTime ) {
                 else if(trans->type() < 0)
                 {
                     //第二种情况是机器人放的炸弹
-                    qDebug() << "现在是机器人的炸弹";
                     bomb_list.pop_front();//先从队列中移走
                     this->detachGameObject(shooter);
                 }
@@ -107,7 +105,6 @@ void UserController::onUpdate( float deltaTime ) {
         shooter->addComponent(new Component);
         shooter->addComponent(new ImageTransform);
         shooter->addComponent(new Transform);
-        //shooter->addComponent(new Ammo(this->transform->type()));
         //这个好像不能用碰撞检测，因为没有item
         shooter->addComponent(new Shooter(this->range, 0, this->transform->type()));
         //这个是调用userController的数据
@@ -116,6 +113,8 @@ void UserController::onUpdate( float deltaTime ) {
         trans->setType(this->transform->type());
         this->attachGameObject(shooter);
         //这一步相当于把shoooter放到了gameScene上面
+
+        //给中间的炸弹也加上碰撞检测
     }
     else
     {
@@ -200,7 +199,7 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     //
     float left_x = this->transform->pos().x();
     float up_y = this->transform->pos().y();
-    float right_x = left_x + wall_w;
+    float right_x = left_x + 32;
     float down_y = up_y + wall_h;
     float half_y = (up_y + down_y) / 2;
     //
@@ -287,16 +286,6 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     //似乎好像改对了吧www太难了www
 }
 
-//int UserController::get_score()
-//{
-//    return this->score;
-//}
-
-//void UserController::add_score(int s)
-//{
-//    this->score += s;
-//}
-
 void UserController::judge_tool(int x, int y)
 {
     int now = 0;
@@ -319,7 +308,7 @@ void UserController::judge_tool(int x, int y)
             break;
         }
     }
-    qDebug() <<"now = " <<now;
+    //qDebug() <<"now = " <<now;
     if(now < 0)
     {
         if(now == speed_tool)
@@ -333,7 +322,7 @@ void UserController::judge_tool(int x, int y)
             //qDebug() << "-2";
             bomb_num += 1;
             tool_bomb_num += 8;
-            qDebug() << "加完道具后的炸弹数量为" << bomb_num;
+            //qDebug() << "加完道具后的炸弹数量为" << bomb_num;
         }
         else if(now == range_tool)
         {

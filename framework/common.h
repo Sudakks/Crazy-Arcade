@@ -21,4 +21,5 @@ extern int robot2_type;
 extern QList<GameObject*> bomb_list;//里面装的是指针
 extern int p1_score;
 extern int p2_score;
+extern int UP, DOWN, LEFT, RIGHT;
 #endif // COMMON_H
