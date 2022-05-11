@@ -6,6 +6,7 @@ map My_map;
 int speed_tool = -1;
 int range_tool = -2;
 int bomb_num_tool = -3;
+int move_tool = -4;
 GameObject* common_obj = new GameObject();
 QList<GameObject*> tool_list;
 int player1_type = 1;

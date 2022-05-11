@@ -12,6 +12,7 @@ extern map My_map;
 extern int speed_tool;
 extern int range_tool;
 extern int bomb_num_tool;
+extern int move_tool;
 extern GameObject* common_obj;
 extern QList<GameObject*> tool_list;//用来放道具的队列，即存了已经炸出来的道具
 extern int player1_type;

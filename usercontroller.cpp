@@ -12,6 +12,7 @@
 #include "ammo.h"
 #include "gameobject.h"
 #include <QRandomGenerator>
+#include "bombmove.h"
 
 UserController::UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up1, QString up2, QString down1, QString down2, QString down3, QString left1, QString left2, QString left3, QString right1, QString right2, QString right3)
 {
@@ -47,6 +48,8 @@ void UserController::onUpdate( float deltaTime ) {
         tool_bomb_num -= deltaTime;
     if(tool_range > 0)
         tool_range -= deltaTime;
+    if(tool_move > 0)
+        tool_move -= deltaTime;
     if(tool_speed <= 0 && speed > 1)
         speed -= 1;
     if(tool_bomb_num <= 0 && bomb_num > 1)
@@ -67,10 +70,8 @@ void UserController::onUpdate( float deltaTime ) {
             if(shoot->get_wait_time() >= 4 * 60)
             {
                 //表明这个炸弹已经要被销毁
-                qDebug() << trans->type();
                 if(trans->type() == this->transform->type())
                 {
-                    qDebug() << "现在是玩家的炸弹";
                     bomb_num++;
                     //说明是自己的炸弹
                     bomb_list.pop_front();//先从队列中移走
@@ -81,6 +82,20 @@ void UserController::onUpdate( float deltaTime ) {
                     //第二种情况是机器人放的炸弹
                     bomb_list.pop_front();//先从队列中移走
                     this->detachGameObject(shooter);
+                }
+                continue;
+            }
+            else if(tool_move > 0 && shoot->get_dir() == 0 && shoot->get_wait_time() >=50)
+            {
+                //说明这个炸弹还没有爆炸，但是如果人碰到了它，就要移动
+                float bombX = trans->pos().x();
+                float bombY = trans->pos().y();
+                //哪一边碰到他
+                int temp = judge_dir(bombX, bombY);
+                qDebug() << "方向是:" << temp;
+                if(temp > 0)
+                {
+                    shoot->enable_move(temp);
                 }
             }
         }
@@ -105,6 +120,7 @@ void UserController::onUpdate( float deltaTime ) {
         shooter->addComponent(new Component);
         shooter->addComponent(new ImageTransform);
         shooter->addComponent(new Transform);
+        shooter->addComponent(new Physics);
         //这个好像不能用碰撞检测，因为没有item
         shooter->addComponent(new Shooter(this->range, 0, this->transform->type()));
         //这个是调用userController的数据
@@ -113,7 +129,6 @@ void UserController::onUpdate( float deltaTime ) {
         trans->setType(this->transform->type());
         this->attachGameObject(shooter);
         //这一步相当于把shoooter放到了gameScene上面
-
         //给中间的炸弹也加上碰撞检测
     }
     else
@@ -129,7 +144,7 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(left3);
            if(judge_walk(-35 * speed, 0, 1))
                vx -= 35 * speed;
-           //qDebug() << "vxA = " << vx;
+           dir = LEFT;
         }
         if (getKey(key_right) )
         {
@@ -142,7 +157,7 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(right3);
             if(judge_walk(35 * speed, 0, 2))
                 vx += 35 * speed;
-            //qDebug() << "vxD = " << vx;
+            dir = RIGHT;
         }
         if (getKey(key_up) )
         {
@@ -153,7 +168,7 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(up2);
             if(judge_walk(0, -35 * speed, 3))
                 vy -= 35 * speed;
-            //qDebug() << "vyW = " << vy;
+            dir = UP;
         }
         if (getKey(key_down) )
         {
@@ -166,7 +181,7 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(down3);
             if(judge_walk(0, 35 * speed, 4))
                 vy += 35 * speed;
-            //qDebug() << "vyS = " << vy;
+            dir = DOWN;
         }
             physics->setVelocity(vx, vy);
     }
@@ -195,7 +210,7 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     const float wall_w = 40;
     const float offset = 20;
     const float offset1 = 27;
-    const float offset2 = 10;
+    const float offset2 = 5;
     //
     float left_x = this->transform->pos().x();
     float up_y = this->transform->pos().y();
@@ -243,12 +258,12 @@ bool UserController::judge_walk(float vx, float vy, int dir)
         y = up_y;
         //qDebug() << "1所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w);
         //qDebug() << "2所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w);
-        if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
+        if(My_map.get_map((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w) >= 1 || My_map.get_map((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w) >= 1)
             return false;
         else
         {           
-            judge_tool((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w));
-            judge_tool((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w));
+            judge_tool((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w);
+            judge_tool((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w);
             return true;
         }
     }
@@ -330,6 +345,50 @@ void UserController::judge_tool(int x, int y)
             tool_range += 8;
             range += 1;
         }
+        else if(now == move_tool)
+        {
+            tool_move += 8;
+        }
     }
     My_map.set_map(x, y, 0);
+}
+
+int UserController::judge_dir(float bombX, float bombY)
+{
+    float leftx = this->transform->pos().x();
+    float upy = this->transform->pos().y();
+    float rightx = leftx + 33;
+    float downy = upy + 40;
+    int GeY = bombX / 40, GeX = bombY / 40;
+    int GeUp = upy / 40, GeDown = downy / 40, GeLeft = leftx / 40, GeRight = rightx / 40;
+    //判断是哪个方向碰到(采用距离判断)
+    if(dir == LEFT)
+    {
+        if(GeLeft == GeY && (GeUp == GeX || GeDown == GeX))
+        {
+            return LEFT;
+        }
+    }
+    else if(dir == RIGHT)
+    {
+        if(GeRight == GeY && (GeUp == GeX || GeDown == GeX))
+        {
+            return RIGHT;
+        }
+    }
+    else if(dir == DOWN)
+    {
+        if(GeDown == GeX && (GeLeft == GeY || GeRight == GeY))
+        {
+            return DOWN;
+        }
+    }
+    else
+    {
+        if(GeUp == GeX && (GeLeft == GeY || GeRight == GeY))
+        {
+            return UP;
+        }
+    }
+    return 0;//return 0表示没有碰到
 }

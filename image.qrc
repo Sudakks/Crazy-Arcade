@@ -9,6 +9,7 @@
         <file>image/Tool/num.png</file>
         <file>image/Tool/range.png</file>
         <file>image/Tool/speed.png</file>
+        <file>image/Tool/move.png</file>
     </qresource>
     <qresource prefix="/map">
         <file>image/Map/floor1.png</file>

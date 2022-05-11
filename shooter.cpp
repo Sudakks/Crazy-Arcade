@@ -10,6 +10,8 @@
 #include "common.h"
 #include <QList>
 #include <QRandomGenerator>
+#include "physics.h"
+#include <QDebug>
 
 Shooter::Shooter(float range, float wait_time, int userType) : Component() {
     this->range = range;
@@ -24,10 +26,31 @@ void Shooter::onAttach() {
     this->transform->setType(this->type);
     this->imageTransform = this->gameObject->getComponent<ImageTransform>();
     Q_ASSERT(this->imageTransform != nullptr);
+    this->physics = this->gameObject->getComponent<Physics>();
+    Q_ASSERT(this->physics != nullptr);
 }
 
 void Shooter::onUpdate(float deltaTime) {
    wait_time += 1;
+   if(move == 1)
+   {
+       float vx = 0, vy = 0;
+       if(judge_move() == true)
+       {
+           //表示还能继续走
+           if(dir == UP)
+               vy -= 60;
+           else if(dir == DOWN)
+               vy += 60;
+           else if(dir == LEFT)
+               vx -= 60;
+           else
+               vx += 60;
+       }
+       else
+           move = 0;
+       this->physics->setVelocity(vx, vy);//哇啊啊啊终于写好了，但很奇怪
+   }
    if(wait_time == 180)
    {
        //此时要爆炸了(差不多是3s的时间)
@@ -164,8 +187,8 @@ int Shooter::random_tool()
 void Shooter::change_map(int x, int y)
 {
     int random =  random_tool();
-    //qDebug() << "随机数是" << random;
-    if(random == speed_tool || random == range_tool || random == bomb_num_tool)
+    qDebug() << "随机数是" << random;
+    if(random == speed_tool || random == range_tool || random == bomb_num_tool || random == move_tool)
     {
         //新建一个gameObject然后把它挂到玩家的transform上面
         //或者是自己就是一个gameObject，然后自己也有transform，放进list里面，玩家捡到了就detach掉
@@ -202,14 +225,17 @@ void Shooter::change_map(int x, int y)
             tool->addComponent(new Transform);
             auto tr = tool->getComponent<Transform>();
             tr->setType(-2);
-            //qDebug() << "2";
-            //My_map.set_map(x, y, range_tool);
-            //My_map.set_map(tr->pos().y() / 40, tr->pos().x() / 40, range_tool);
-            //qDebug() << "真实位置" << tr->pos().x() << tr->pos().y();
-            //qDebug() << "我就不信了：" << tr->pos().y() / 40 << tr->pos().x() / 40 << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
-            //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
-            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
-            //qDebug() << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
+        }
+        else if(random == move_tool)
+        {
+            ImageTransformBuilder()
+                    .setPos(QPointF(40 * y, 40 * x))
+                    .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                    .setImage(":/tool/image/Tool/move.png")
+                    .addToGameObject(tool);
+            tool->addComponent(new Transform);
+            auto tr = tool->getComponent<Transform>();
+            tr->setType(-4);
         }
         else
         {
@@ -223,14 +249,6 @@ void Shooter::change_map(int x, int y)
             tool->addComponent(new Transform);
             auto tr = tool->getComponent<Transform>();
             tr->setType(-3);
-            //My_map.set_map(x, y, bomb_num_tool);
-            //qDebug() << bomb_num_tool;
-            //My_map.set_map(tr->pos().y(), tr->pos().x(), bomb_num_tool);
-            //qDebug() << "真实位置" << tr->pos().x() << tr->pos().y();
-            //qDebug() << "我就不信了：" << tr->pos().y() / 40 << tr->pos().x() / 40 << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
-            //qDebug() << "实际位置是" << tr->pos().y() / 40 << "," << tr->pos().x() / 40;
-            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
-            //qDebug() << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
         }
         attachGameObject(tool);
         tool->addComponent(new Transform);
@@ -258,4 +276,56 @@ void Shooter::develop_bomb(float offsetX, float offsetY)
     this->flash_list.emplace_back(flash);
     amm->set_collider(flash);
     attachGameObject(ammo);
+}
+
+void Shooter::enable_move(int dir)
+{
+    this->move = 1;
+    this->dir = dir;
+}
+
+int Shooter::get_dir()
+{
+    return this->dir;
+}
+
+bool Shooter::judge_move()
+{
+    float speed = 60;
+    float offset = 5;
+    float x = this->transform->pos().x();
+    float y = this->transform->pos().y();
+    if(dir == UP)
+    {
+        y -= speed * 0.0166;
+        if(My_map.get_map(y / 40, (x + offset) / 40) > 0 || My_map.get_map(y / 40, (x + 37 - offset) / 40) > 0)
+        {
+            return false;
+        }
+    }
+    else if(dir == DOWN)
+    {
+        y += speed * 0.0166;
+        if(My_map.get_map(y / 40, (x + offset) / 40) > 0 || My_map.get_map(y / 40, (x + 37 - offset) / 40) > 0)
+        {
+            return false;
+        }
+    }
+    else if(dir == LEFT)
+    {
+        x -= speed * 0.0166;
+        if(My_map.get_map(y / 40, x / 40) > 0 || My_map.get_map((y + 37 - offset) / 40, x) > 0)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        x += speed * 0.0166;
+        if(My_map.get_map(y / 40, x / 40) > 0 || My_map.get_map((y + 37 - offset) / 40, x) > 0)
+        {
+            return false;
+        }
+    }
+    return true;
 }

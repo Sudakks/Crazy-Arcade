@@ -56,8 +56,8 @@ void AIcontroller::onUpdate(float deltaTime)
     {
         //qDebug() << "判断放炸弹";
         //这个表示到了放炸弹的时间,开始放炸弹（设计几条路线然后判断是否有余地放炸弹）
-        int mapX = X / 40;
-        int mapY = Y / 40;
+        int mapX = (X + 18) / 40;
+        int mapY = (Y + 18) / 40;
         bool flag = false;
         if(last_dir == UP && My_map.get_map(mapY - 1, mapX) <= 0 && My_map.get_map(mapY - 2, mapX) <= 0)
         {
@@ -96,7 +96,7 @@ void AIcontroller::onUpdate(float deltaTime)
             bomb->addComponent(new Component);
             bomb->addComponent(new ImageTransform);
             bomb->addComponent(new Transform);
-            auto position = bomb->getComponent<Transform>();
+            //auto position = bomb->getComponent<Transform>();
             //qDebug() << "实际的炸弹位置" << position->pos().x() << position->pos().y();
             bomb_x = this->transform->pos().x(), bomb_y = this->transform->pos().y();
             //qDebug() << "我设定的位置" << bomb_x << bomb_y;
@@ -146,8 +146,8 @@ bool AIcontroller::judge(float vx, float vy, int dir)
     //
     float left_x = this->transform->pos().x();
     float up_y = this->transform->pos().y();
-    float right_x = left_x + 37;
-    float down_y = up_y + 37;
+    float right_x = left_x + 40;
+    float down_y = up_y + 40;
     float half_y = (up_y + down_y) / 2;
     //
     int up_Y = up_y / wall_h;

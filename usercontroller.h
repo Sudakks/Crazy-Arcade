@@ -23,7 +23,8 @@ private:
     float tool_speed = 0;
     float tool_bomb_num = 0;//道具的时限
     float tool_range = 0;
-    //int score = 0;
+    float tool_move = 0;
+    int dir = 0;
     float limit = -1;//用来控制按下空格键多久才能继续按下(先设置为1.5s)
     //利用构造函数，分别表示两个玩家
     Qt::Key key_up;
@@ -64,6 +65,7 @@ public :
     //int get_score();
     //void add_score(int s);
     void judge_tool(int x, int y);
+    int judge_dir(float bombX, float bombY);
 
 };
 

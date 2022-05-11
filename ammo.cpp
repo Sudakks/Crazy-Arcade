@@ -64,7 +64,7 @@ void Ammo::judge_type(Transform *transform, GameObject* gameObject)
     else if(transform->type() == -1)
     {
         //robot1
-        imageTransform->setImage(":/robot1/image/Robot1/r1_die1.png");
+        imageTransform->setImage(":/robot1/image/Robot1/r1_die.png");
         if(type == 1)
             p1_score += robot_score;
         else if(type == 2)
@@ -73,7 +73,7 @@ void Ammo::judge_type(Transform *transform, GameObject* gameObject)
     else if(transform->type() == -2)
     {
         //robot2
-        imageTransform->setImage(":/robot2/image/Robot2/r2_die3.png");
+        imageTransform->setImage(":/robot2/image/Robot2/r2_die.png");
         if(type == 1)
             p1_score += robot_score;
         else if(type == 2)
