@@ -12,7 +12,6 @@
 #include "ammo.h"
 #include "gameobject.h"
 #include <QRandomGenerator>
-#include "bombmove.h"
 
 UserController::UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up1, QString up2, QString down1, QString down2, QString down3, QString left1, QString left2, QString left3, QString right1, QString right2, QString right3)
 {
@@ -92,7 +91,7 @@ void UserController::onUpdate( float deltaTime ) {
                 float bombY = trans->pos().y();
                 //哪一边碰到他
                 int temp = judge_dir(bombX, bombY);
-                qDebug() << "方向是:" << temp;
+                //qDebug() << "方向是:" << temp;
                 if(temp > 0)
                 {
                     shoot->enable_move(temp);

@@ -88,4 +88,24 @@
         <file>image/Flash/2.png</file>
         <file>image/Flash/3.png</file>
     </qresource>
+    <qresource prefix="/surface">
+        <file>image/surface/upIcon.png</file>
+        <file>image/surface/surface_done.png</file>
+        <file>image/surface/play_btn.png</file>
+        <file>image/surface/rule.png</file>
+        <file>image/surface/start.png</file>
+        <file>image/surface/again.png</file>
+        <file>image/surface/cast.png</file>
+        <file>image/surface/music_off.png</file>
+        <file>image/surface/music_on.png</file>
+        <file>image/surface/home.png</file>
+        <file>image/surface/home1.png</file>
+        <file>image/surface/medium-volume.png</file>
+        <file>image/surface/mute.png</file>
+        <file>image/surface/pause.png</file>
+        <file>image/surface/restart .png</file>
+        <file>image/surface/circled-left.png</file>
+        <file>image/surface/title.png</file>
+        <file>image/surface/back.png</file>
+    </qresource>
 </RCC>

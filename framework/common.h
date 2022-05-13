@@ -4,7 +4,7 @@
 #include "gameobject.h"
 #include "gamescene.h"
 #include "transform.h"
-
+#include "mainwindow.h"
 extern int soft_score;
 extern int robot_score;
 extern int player_score;
@@ -23,4 +23,5 @@ extern QList<GameObject*> bomb_list;//里面装的是指针
 extern int p1_score;
 extern int p2_score;
 extern int UP, DOWN, LEFT, RIGHT;
+extern int scene_num;
 #endif // COMMON_H

@@ -122,20 +122,20 @@ void loadScene(GameScene *gameScene) {
           .addToGameObject(wall);
   gameScene->attachGameObject(wall);
   //打印二维数组
-    for(int i = 0; i < 15; i++)
+    /*for(int i = 0; i < 15; i++)
     {
         for(int j = 0; j < 20; j++)
         {
             printf("%d ", My_map.get_map(i, j));
         }
         printf("\n");
-    }
+    }*/
 }
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  setFixedSize(1200,1000);
+  setFixedSize(1000,600);
   gameScene = new GameScene();
   gameScene->setParent(this);
   auto view = new QGraphicsView(gameScene, this);
@@ -183,7 +183,7 @@ MainWindow::MainWindow(QWidget *parent)
               ":/player2/image/Player2/p2_right3.png");
 
   //初始化robot1
-  /*QString str3(":/robot1/image/Robot1/r1_down1.png");
+  QString str3(":/robot1/image/Robot1/r1_down1.png");
   QByteArray cpath3 = str3.toLocal8Bit();
   char*path3 = cpath3.data();
   init_robot(-1, path3,
@@ -208,7 +208,7 @@ MainWindow::MainWindow(QWidget *parent)
              ":/robot2/image/Robot2/r2_left1.png",
              ":/robot2/image/Robot2/r2_left2.png",
              ":/robot2/image/Robot2/r2_right1.png",
-             ":/robot2/image/Robot2/r2_right2.png");*/
+             ":/robot2/image/Robot2/r2_right2.png");
 }
 
 MainWindow::~MainWindow() { delete ui; }
