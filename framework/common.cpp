@@ -1,5 +1,4 @@
 #include "common.h"
-
 int soft_score = 2;
 int robot_score = 7;
 int player_score = 10;
@@ -18,5 +17,6 @@ QList<GameObject*> bomb_list;//即对于地图上的所有炸弹都是这样处�
 int p1_score = 0;
 int p2_score = 0;
 int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
-int scene_num = 0;
-
+int win = 0;//0表示游戏还在进行中
+QTimer *updateTimer = nullptr;
+//MyButton *startBtn = new MyButton(":/surface/image/surface/start.png");

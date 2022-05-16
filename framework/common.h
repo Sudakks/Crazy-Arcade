@@ -5,6 +5,7 @@
 #include "gamescene.h"
 #include "transform.h"
 #include "mainwindow.h"
+#include <QTimer>
 extern int soft_score;
 extern int robot_score;
 extern int player_score;
@@ -23,5 +24,12 @@ extern QList<GameObject*> bomb_list;//里面装的是指针
 extern int p1_score;
 extern int p2_score;
 extern int UP, DOWN, LEFT, RIGHT;
-extern int scene_num;
+extern int win;
+extern QTimer *updateTimer;
+extern MyButton *startBtn;
+extern MyButton *backBtn;
+extern MyButton *crolBtn;
+extern MyButton *toolBtn;
+extern MyButton *pause;
+//extern MyButton *exitBtn;
 #endif // COMMON_H

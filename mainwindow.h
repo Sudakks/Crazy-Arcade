@@ -2,7 +2,7 @@
 #define MAINWINDOW_H_
 
 #include <gamescene.h>
-
+#include "mybutton.h"
 #include <QGraphicsView>
 #include <QMainWindow>
 
@@ -18,10 +18,24 @@ class MainWindow : public QMainWindow {
  public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
-  void init_player(int type, char* photo, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up1, QString up2, QString down1, QString down2, QString down3, QString left1, QString left2, QString left3, QString right1, QString right2, QString right3);
-  void init_robot(int type, char* photo, QString up1, QString up2, QString down1, QString down2, QString left1, QString left2, QString right1, QString right2);
+  void loadScene1(GameScene *gameScene);//home
+  void loadScene2(GameScene *gameScene);//introduction1
+  void loadScene3(GameScene * gameScene);//introduction2
+  GameScene *gameScene;
+  void init_btn(QPushButton *btn, QString image);
+  void zoom(QPushButton *btn, int offset1, int offset2);
+  void change();
+
  private:
   Ui::MainWindow *ui;
-  GameScene *gameScene;
+  QPushButton *startBtn;
+  QPushButton *backBtn;
+  QPushButton *crolBtn;
+  QPushButton *toolBtn;
+  QPushButton *pause;
+  QPushButton *exitBtn;
+  QPushButton *introBtn;
+  QGraphicsView *view;
+  bool stop;
 };
 #endif  // MAINWINDOW_H_

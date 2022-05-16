@@ -12,10 +12,6 @@ GameScene::GameScene() {
   updateTimer->setInterval(1000 / 60);//以毫秒为单位
   connect(updateTimer, &QTimer::timeout, this, &GameScene::onUpdate);
   updateTimer->start();
-  /*if(scene_num == 0)
-      updateTimer->stop();
-  else if(scene_num == 1)
-      updateTimer->start();*/
 }
 
 GameScene::~GameScene() {

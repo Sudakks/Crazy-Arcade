@@ -21,9 +21,10 @@ class GameScene final : public QGraphicsScene {
   void attachGameObject(GameObject *gameObject);
   void detachGameObject(GameObject *gameObject);
   GameObject *getGameObject(const char *name);
+  //QTimer *updateTimer = nullptr;//写成全局
 
  private:
-  QTimer *updateTimer = nullptr;
+
   //QTimer *updateTimer = nullptr;
   //新建： QTimer *timer = new QTimer(this)
   //连接：connect(timer, &QTimer::timeout, this, QOverload<>::of(&AnalogClock::update));

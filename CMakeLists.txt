@@ -38,9 +38,7 @@ set(PROJECT_SOURCES
         usercontroller.h usercontroller.cpp
         map.h map.cpp
         aicontroller.h aicontroller.cpp
-        startscene.h startscene.cpp
         mybutton.h mybutton.cpp
-        instruction.h instruction.cpp
         image.qrc
 )
 

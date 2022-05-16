@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QWidget>
 #include <QString>
+#include "mainwindow.h"
 
 class MyButton : public QPushButton
 {
@@ -11,12 +12,8 @@ private:
     QString image;
     QString pressImage;
 public:
-    //explicit MyButton(QWidget *parent = nullptr);
-
-    MyButton(QString image, QString pressImage = "");
+    explicit MyButton(QString image, QString pressImage = "");
     void zoom(int offset1, int offset2);
 signals:
-
 };
-
 #endif // MYBUTTON_H

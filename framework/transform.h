@@ -18,7 +18,6 @@ class Transform : public Component, public QGraphicsItem {
 
  protected:
   int mType = QGraphicsItem::Type;
-  //这个type是啥含义？？
 
  protected:
   QRectF boundingRect() const override;
@@ -27,7 +26,6 @@ class Transform : public Component, public QGraphicsItem {
 
  protected:
   void mousePressEvent(QGraphicsSceneMouseEvent *ev) override;
-  //不理解这个函数
 
  protected:
   bool sceneEventFilter(QGraphicsItem *watched, QEvent *event) override;

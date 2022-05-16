@@ -2,12 +2,13 @@
 #define INSTRUCTION_H
 
 #include <QWidget>
-
-class instruction : public QWidget
+#include "mainwindow.h"
+class instruction : public QMainWindow
 {
     Q_OBJECT
 public:
     explicit instruction(QWidget *parent = nullptr);
+    void paintEvent(QPaintEvent *);
 
 signals:
 

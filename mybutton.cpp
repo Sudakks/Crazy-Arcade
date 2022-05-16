@@ -2,14 +2,9 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QPropertyAnimation>
-//MyButton::MyButton(QWidget *parent)
-//    : QPushButton{parent}
-//{
-
-//}
-
+#include "mainwindow.h"
 MyButton::MyButton(QString image, QString pressImage)
-{
+{   
     this->image = image;
     this->pressImage = pressImage;
     QPixmap pix;
@@ -19,10 +14,10 @@ MyButton::MyButton(QString image, QString pressImage)
         qDebug() << "failure loading";
         return;
     }
-    this->setFixedSize(pix.width(), pix.height());
-    this->setStyleSheet("QPushButton{border:0px;}");
-    this->setIcon(pix);
-    this->setIconSize(QSize(pix.width(), pix.height()));
+    /*this->QPushButton::setFixedSize(pix.width(), pix.height());
+    this->QPushButton::setStyleSheet("QPushButton{border:0px;}");
+    this->QPushButton::setIcon(pix);
+    this->QPushButton::setIconSize(QSize(pix.width(), pix.height()));*/
 }
 
 void MyButton::zoom(int offset1, int offset2)
@@ -31,7 +26,7 @@ void MyButton::zoom(int offset1, int offset2)
     //设置时间间隔
     ani->setDuration(200);
     //起始和结束位置
-    ani->setStartValue(QRect(this->x(), this->y() + offset1, this->width(), this->height()));
+    ani->setStartValue(QRect(this->QPushButton::x(), this->y() + offset1, this->width(), this->height()));
     ani->setEndValue(QRect(this->x(), this->y() + offset2, this->width(), this->height()));
 
     //设置弹跳曲线
