@@ -47,14 +47,7 @@
         <file>image/Robot2/r2_up1.png</file>
         <file>image/Robot2/r2_up2.png</file>
     </qresource>
-    <qresource prefix="/bomb2">
-        <file>image/Bomb2/1.png</file>
-        <file>image/Bomb2/2.png</file>
-        <file>image/Bomb2/3.png</file>
-        <file>image/Bomb2/11.png</file>
-        <file>image/Bomb2/22.png</file>
-        <file>image/Bomb2/33.png</file>
-    </qresource>
+    <qresource prefix="/bomb2"/>
     <qresource prefix="/player1">
         <file>image/Player1/p1_down1.png</file>
         <file>image/Player1/p1_down2.png</file>
@@ -105,14 +98,11 @@
         <file>image/surface/instruct.png</file>
         <file>image/surface/slogan.png</file>
         <file>image/surface/p1.png</file>
-        <file>image/surface/pp1.png</file>
         <file>image/surface/p2.png</file>
-        <file>image/surface/pp2.png</file>
         <file>image/surface/intro1.png</file>
         <file>image/surface/intro2.png</file>
         <file>image/surface/con_page.png</file>
         <file>image/surface/home_page.png</file>
-        <file>image/surface/note2.png</file>
         <file>image/surface/tool_page.png</file>
         <file>image/surface/pause.png</file>
         <file>image/surface/score1.png</file>

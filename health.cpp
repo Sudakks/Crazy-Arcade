@@ -4,7 +4,7 @@
 #include "common.h"
 #include "imagetransform.h"
 #include "transformbuilder.h"
-
+#include "gamescene.h"
 Health::Health(int health) : health(health) {}
 
 void Health::beHit() {
@@ -41,6 +41,7 @@ void Health::beHit() {
                 .addToGameObject(win);
         attachGameObject(win);
     }
+    this->gameObject->get_scene()->get_updateTimer()->stop();
     destory(this->gameObject);
   }
 }

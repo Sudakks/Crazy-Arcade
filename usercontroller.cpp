@@ -29,13 +29,6 @@ UserController::UserController (int speed, float range, int bomb_num, Qt::Key ke
     this->down1 = down1, this->down2 = down2, this->down3 = down3;
     this->right1 = right1, this->right2 = right2, this->right3 = right3;
     this->left1 = left1, this->left2 = left2, this->left3 = left3;
-
-    //this->score = new GameObject;
-    //score->addComponent(new Transform);
-    //Q_ASSERT(this->gameObject->get_scene() != NULL);
-    //this->gameObject->get_scene()->attachGameObject(score);
-    //q = score->getComponent<Transform>();
-    //q->setPos(0,0);
 }
 
 void UserController::onAttach () {
@@ -315,10 +308,6 @@ void UserController::judge_tool(int x, int y)
     {
         GameObject* tool = tool_list.at(i);
         auto pos = tool->getComponent<Transform>();
-        //qDebug() << "222真实位置" << pos->pos().x() << pos->pos().y();
-        //qDebug() <<"人物的位置是：" << x << "  "<< y << " " << now;
-        //qDebug() << "道具的位置是" << (int)pos->pos().y() / 40 << "  "<< (int)pos->pos().x() / 40;
-        //qDebug() << "在地图上显示的是：" << My_map.get_map(pos->pos().y() / 40, pos->pos().x() / 40);
         if((int)(pos->pos().y() / 40) == x && (int)(pos->pos().x() / 40) == y)
         {
             //说明找到了这一个道具
@@ -329,25 +318,20 @@ void UserController::judge_tool(int x, int y)
             break;
         }
     }
-    //qDebug() <<"now = " <<now;
     if(now < 0)
     {
         if(now == speed_tool)
         {
-            //qDebug() << "-1";
             speed += 1;
             tool_speed += 8;
         }
         else if(now == bomb_num_tool)
         {
-            //qDebug() << "-2";
             bomb_num += 1;
             tool_bomb_num += 8;
-            //qDebug() << "加完道具后的炸弹数量为" << bomb_num;
         }
         else if(now == range_tool)
         {
-            //qDebug() << "-3";
             tool_range += 8;
             range += 1;
         }

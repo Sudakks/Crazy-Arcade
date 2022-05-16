@@ -13,8 +13,6 @@ SummonDummy::SummonDummy() {}
 void SummonDummy::onAttach() {
   auto transform = this->gameObject->getComponent<Transform>();
   Q_ASSERT(transform != nullptr);
-  //auto text = new QGraphicsSimpleTextItem(transform);
-  //text->setText("生成假人");
   // Handle mouse event of text by this->transform
   transform->setFiltersChildEvents(true);
 }

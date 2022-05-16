@@ -49,7 +49,7 @@ void Shooter::onUpdate(float deltaTime) {
        }
        else
            move = 0;
-       this->physics->setVelocity(vx, vy);//哇啊啊啊终于写好了，但很奇怪
+       this->physics->setVelocity(vx, vy);
    }
    if(wait_time == 180)
    {
@@ -186,7 +186,6 @@ int Shooter::random_tool()
 void Shooter::change_map(int x, int y)
 {
     int random =  random_tool();
-    qDebug() << "随机数是" << random;
     if(random == speed_tool || random == range_tool || random == bomb_num_tool || random == move_tool)
     {
         //新建一个gameObject然后把它挂到玩家的transform上面
@@ -204,14 +203,6 @@ void Shooter::change_map(int x, int y)
             tool->addComponent(new Transform);
             auto tr = tool->getComponent<Transform>();
             tr->setType(-1);
-            //qDebug() << "1";
-           // My_map.set_map(x, y, speed_tool);
-            //My_map.set_map(tr->pos().y() / 40, tr->pos().x() / 40, speed_tool);
-            //qDebug() << "真实位置" << tr->pos().x() << tr->pos().y();
-            //qDebug() << "实际位置是" << tr->pos().x() << "," << tr->pos().y();
-            //qDebug() << "我就不信了：" << tr->pos().y() / 40 << tr->pos().x() / 40 << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
-            //qDebug() << "map[" << x << "][" << y << "] = " << My_map.get_map(x, y);
-            //qDebug() << My_map.get_map(tr->pos().y() / 40, tr->pos().x() / 40);
         }
         else if(random == range_tool)
         {
@@ -244,7 +235,6 @@ void Shooter::change_map(int x, int y)
                     .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                     .setImage(":/tool/image/Tool/num.png")
                     .addToGameObject(tool);
-            //qDebug() << "3";
             tool->addComponent(new Transform);
             auto tr = tool->getComponent<Transform>();
             tr->setType(-3);
@@ -290,7 +280,7 @@ int Shooter::get_dir()
 
 bool Shooter::judge_move()
 {
-    float speed = 60;
+    float speed = 70;
     float offset = 5;
     float x = this->transform->pos().x();
     float y = this->transform->pos().y();

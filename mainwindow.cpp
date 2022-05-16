@@ -30,7 +30,6 @@
 
 void setFont(QGraphicsSimpleTextItem* text, QString content, int x, int y)
 {
-    text->setFont(QFont("Fixedsys"));
     text->setBrush(Qt::black);
     text->setText(content);
     text->setPos(x, y);
@@ -43,7 +42,6 @@ void loadScene(GameScene *gameScene) {
   //添加地砖的图片
   QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap(":/map/image/Map/dizhuan.png"));
   gameScene->addItem(pixmapItem);
-  //pixmapItem->setOffset(QPoint(100,200));//,,,调整位置
   QGraphicsPixmapItem *pix = new QGraphicsPixmapItem(QPixmap(":/surface/image/surface/score1.png"));
   pix->setOffset(820, 130);
   gameScene->addItem(pix);
@@ -238,10 +236,6 @@ void loadScene(GameScene *gameScene) {
           trans->setType(2);
           score2 = new QGraphicsSimpleTextItem(score_t);
           live2 = new QGraphicsSimpleTextItem(score_t);
-          /*score2->setFont(QFont("Fixedsys"));
-          score2->setBrush(Qt::white);
-          score2->setText("0");
-          score2->setPos(-3, 226);*/
           setFont(score2, "0", -3, 226);
           setFont(live2, "3", 77, 137);
           break;
@@ -323,8 +317,6 @@ void loadScene(GameScene *gameScene) {
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
-
-  stop = false;
   ui->setupUi(this);
   setWindowFlags(Qt::WindowCloseButtonHint | Qt:: MSWindowsFixedSizeDialogHint);
   setFixedSize(1000, 700);
@@ -477,12 +469,6 @@ void MainWindow::loadScene1(GameScene *gameScene)
     startBtn->show();
     introBtn->show();
     exitBtn->show();
-    QTextEdit text;
-    text.setParent(this);
-    text.setText(QString("12222222"));
-    text.setFontPointSize(100);
-    text.setFontFamily("Microsoft YaHei");
-    text.show();
 }
 
 void MainWindow::loadScene2(GameScene *gameScene)
@@ -551,17 +537,5 @@ void MainWindow::change()
     auto ptr = gameScene->getGameObject("background");
     if(ptr != NULL)
         gameScene->detachGameObject(ptr);
-}
-
-void MainWindow::paintEvent(QPaintEvent *)
-{
-    //qDebug() << "in";
-    QPainter painter(this);
-    painter.setPen(Qt::white);
-    QFont font = painter.font();
-    font.setPixelSize(10);
-    font.setFamily("Microsoft YaHei");
-    painter.setFont(font);
-    painter.drawText(850, 160, QString::number(p1_score).toStdString().c_str());
 }
 
