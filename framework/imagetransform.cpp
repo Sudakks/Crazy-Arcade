@@ -68,7 +68,6 @@ void ImageTransform::updateImageRect() {
       break;
   }
   imageRect.translate(-alignmentPoint);
-  //为什么有两个translate？？？
 }
 
 QRectF ImageTransform::boundingRect() const { return this->imageRect; }

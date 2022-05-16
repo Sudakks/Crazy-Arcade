@@ -1,4 +1,7 @@
 #include "common.h"
+#include "gameobject.h"
+#include <QGraphicsSimpleTextItem>
+
 int soft_score = 2;
 int robot_score = 7;
 int player_score = 10;
@@ -18,5 +21,7 @@ int p1_score = 0;
 int p2_score = 0;
 int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
 int win = 0;//0表示游戏还在进行中
-QTimer *updateTimer = nullptr;
-//MyButton *startBtn = new MyButton(":/surface/image/surface/start.png");
+QGraphicsSimpleTextItem *score1 = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *score2 = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *live1 = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *live2 = new QGraphicsSimpleTextItem();

@@ -67,7 +67,6 @@ void Shooter::onUpdate(float deltaTime) {
        flash->setPixmap(QPixmap(":/bomb1/image/Bomb1/transparency.png"));
        flash->setPos(0, 0);//这个是以图片的中心点的位置发射
        flash->setOffset(-15, -25);
-       //this->flash_list.emplace_back(flash);
        amm->set_collider(flash);
        attachGameObject(ammo);
        for(int i = 1; i <= range; i++)

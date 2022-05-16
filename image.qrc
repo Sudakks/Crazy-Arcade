@@ -117,5 +117,7 @@
         <file>image/surface/pause.png</file>
         <file>image/surface/score1.png</file>
         <file>image/surface/score2.png</file>
+        <file>image/surface/p1_win2.png</file>
+        <file>image/surface/p2_win2.png</file>
     </qresource>
 </RCC>

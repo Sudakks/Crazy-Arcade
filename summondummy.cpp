@@ -2,10 +2,10 @@
 
 #include <gameobject.h>
 #include <transform.h>
-
+#include <QTimer>
 #include <QGraphicsRectItem>
 #include <QGraphicsSimpleTextItem>
-
+#include "gamescene.h"
 #include "health.h"
 
 SummonDummy::SummonDummy() {}
@@ -13,18 +13,21 @@ SummonDummy::SummonDummy() {}
 void SummonDummy::onAttach() {
   auto transform = this->gameObject->getComponent<Transform>();
   Q_ASSERT(transform != nullptr);
-  auto text = new QGraphicsSimpleTextItem(transform);
-  text->setText("生成假人");
+  //auto text = new QGraphicsSimpleTextItem(transform);
+  //text->setText("生成假人");
   // Handle mouse event of text by this->transform
   transform->setFiltersChildEvents(true);
 }
 
 void SummonDummy::onClick(QGraphicsSceneMouseEvent *ev) {
-  auto dummy = new GameObject();
-  auto dummyTransform = new Transform(QPointF(100, 30));
-  auto dummyRect = new QGraphicsRectItem(dummyTransform);
-  dummyRect->setRect(QRectF(-20, -20, 40, 40));
-  dummy->addComponent(dummyTransform);
-  dummy->addComponent(new Health(3));
-  attachGameObject(dummy);
+    if(stop)
+    {
+        stop = false;
+        this->gameObject->get_scene()->get_updateTimer()->start();
+    }
+    else
+    {
+        stop = true;
+        this->gameObject->get_scene()->get_updateTimer()->stop();
+    }
 }

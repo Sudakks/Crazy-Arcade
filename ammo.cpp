@@ -34,6 +34,8 @@ void Ammo::onUpdate(float deltaTime) {
     destory(this->gameObject);
     break;
   }
+  score1->setText(QString::number(p1_score));
+  score2->setText(QString::number(p2_score));
 }
 
 void Ammo::set_collider(QGraphicsItem *co)

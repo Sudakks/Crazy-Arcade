@@ -68,7 +68,7 @@ class GameObject final : public QObject {
 
  public:
   void setParentGameScene(GameScene *gameScene);
-
+  GameScene *get_scene();
  private:
   GameScene *gameScene = nullptr;
   QList<Component *> components;

@@ -6,6 +6,7 @@
 #include "transform.h"
 #include "mainwindow.h"
 #include <QTimer>
+#include <QGraphicsSimpleTextItem>
 extern int soft_score;
 extern int robot_score;
 extern int player_score;
@@ -25,11 +26,9 @@ extern int p1_score;
 extern int p2_score;
 extern int UP, DOWN, LEFT, RIGHT;
 extern int win;
-extern QTimer *updateTimer;
-extern MyButton *startBtn;
-extern MyButton *backBtn;
-extern MyButton *crolBtn;
-extern MyButton *toolBtn;
-extern MyButton *pause;
-//extern MyButton *exitBtn;
+
+extern QGraphicsSimpleTextItem *score1;
+extern QGraphicsSimpleTextItem *score2;
+extern QGraphicsSimpleTextItem *live1;
+extern QGraphicsSimpleTextItem *live2;
 #endif // COMMON_H

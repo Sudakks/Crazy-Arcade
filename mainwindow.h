@@ -25,6 +25,7 @@ class MainWindow : public QMainWindow {
   void init_btn(QPushButton *btn, QString image);
   void zoom(QPushButton *btn, int offset1, int offset2);
   void change();
+  void paintEvent(QPaintEvent *);
 
  private:
   Ui::MainWindow *ui;
@@ -32,10 +33,10 @@ class MainWindow : public QMainWindow {
   QPushButton *backBtn;
   QPushButton *crolBtn;
   QPushButton *toolBtn;
-  QPushButton *pause;
   QPushButton *exitBtn;
   QPushButton *introBtn;
   QGraphicsView *view;
+  GameObject * pause1;
   bool stop;
 };
 #endif  // MAINWINDOW_H_

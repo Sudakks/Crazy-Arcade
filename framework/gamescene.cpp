@@ -36,6 +36,11 @@ GameObject *GameScene::getGameObject(const char *name) {
   return nullptr;
 }
 
+QTimer *GameScene::get_updateTimer()
+{
+    return this->updateTimer;
+}
+
 void GameScene::onUpdate() {
   // Do firstUpdate() for game objects
   for (auto gameObject : gameObjectsAttachedOnLastUpdate) {

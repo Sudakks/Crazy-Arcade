@@ -10,6 +10,8 @@ class SummonDummy : public Component {
   void onAttach() override;
 
   void onClick(QGraphicsSceneMouseEvent *ev) override;
+private:
+  bool stop = false;
 };
 
 #endif  // SUMMONDUMMY_H_

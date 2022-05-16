@@ -8,9 +8,11 @@ class Health : public Hitable {
   explicit Health(int health);
 
   void beHit() override;
+  void set_hit(int val);
 
  protected:
   int health;
+  int have_hit = false;
 };
 
 #endif  // HEALTH_H_

@@ -25,8 +25,18 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QPropertyAnimation>
+#include <QTextEdit>
+#include "summondummy.h"
 
+void setFont(QGraphicsSimpleTextItem* text, QString content, int x, int y)
+{
+    text->setFont(QFont("Fixedsys"));
+    text->setBrush(Qt::black);
+    text->setText(content);
+    text->setPos(x, y);
+}
 void loadScene(GameScene *gameScene) {
+
   //增加背景板的图片
   QGraphicsPixmapItem *pixmapItem0 = new QGraphicsPixmapItem(QPixmap(":/surface/image/surface/background.png"));
   gameScene->addItem(pixmapItem0);
@@ -40,14 +50,6 @@ void loadScene(GameScene *gameScene) {
   QGraphicsPixmapItem *pixx = new QGraphicsPixmapItem(QPixmap(":/surface/image/surface/score2.png"));
   pixx->setOffset(820, 350);
   gameScene->addItem(pixx);
-
-  QPainter painter;
-  painter.setPen(Qt::white);
-  QFont font = painter.font();
-  font.setPixelSize(10);
-  font.setFamily("Microsoft YaHei");
-  painter.setFont(font);
-  painter.drawText(830, 160, QString::number(p1_score).toStdString());
 
 
   //加载地图图片
@@ -146,10 +148,15 @@ void loadScene(GameScene *gameScene) {
   ImageTransformBuilder()
           .setPos(QPointF(8*40,6*40))
           .setAlignment(Qt::AlignLeft | Qt::AlignTop)
-          .setImage("C:/Users/DELL/Desktop/pro2/project-2-Sudakks/image/Map/other")
+          .setImage(":/map/image/Map/other.png")
           .addToGameObject(wall);
   gameScene->attachGameObject(wall);
 
+  GameObject* score = new GameObject;
+  score->addComponent(new Transform);
+  auto score_t = score->getComponent<Transform>();
+  gameScene->attachGameObject(score);
+  score_t->setPos(870, 235);
   //init_player1
   while(1)
   {
@@ -158,6 +165,7 @@ void loadScene(GameScene *gameScene) {
       if(My_map.get_map(x, y) == 0 && (!My_map.get_map(x - 1, y) || !My_map.get_map(x + 1, y) || !My_map.get_map(x, y - 1) || !My_map.get_map(x, y + 1)))
       {
           auto player = new GameObject();
+          player->setParentGameScene(gameScene);
           ImageTransformBuilder()
                   .setPos(QPointF(40*y,40*x))
                   .setAlignment(Qt::AlignLeft | Qt::AlignTop)
@@ -185,6 +193,10 @@ void loadScene(GameScene *gameScene) {
           user->set_tool_bomb_num(0);//初始时的道具时间都为0
           auto trans = player->getComponent<Transform>();
           trans->setType(1);
+          score1 = new QGraphicsSimpleTextItem(score_t);
+          live1 = new QGraphicsSimpleTextItem(score_t);
+          setFont(score1, "0", 0, 0);
+          setFont(live1, "3", 76, -86);
           break;
       }
   }
@@ -224,6 +236,14 @@ void loadScene(GameScene *gameScene) {
           user->set_tool_bomb_num(0);//初始时的道具时间都为0
           auto trans = player->getComponent<Transform>();
           trans->setType(2);
+          score2 = new QGraphicsSimpleTextItem(score_t);
+          live2 = new QGraphicsSimpleTextItem(score_t);
+          /*score2->setFont(QFont("Fixedsys"));
+          score2->setBrush(Qt::white);
+          score2->setText("0");
+          score2->setPos(-3, 226);*/
+          setFont(score2, "0", -3, 226);
+          setFont(live2, "3", 77, 137);
           break;
       }
   }
@@ -241,7 +261,7 @@ void loadScene(GameScene *gameScene) {
                   .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                   .setImage(":/robot1/image/Robot1/r1_down1.png")
                   .addToGameObject(robot);
-          robot->addComponent(new Health(1));
+          robot->addComponent(new Hitable);
           robot->addComponent(new Physics());
           robot->addComponent(new AIcontroller(
                                   ":/robot1/image/Robot1/r1_up1.png",
@@ -273,7 +293,7 @@ void loadScene(GameScene *gameScene) {
                   .setAlignment(Qt::AlignLeft | Qt::AlignTop)
                   .setImage(":/robot2/image/Robot2/r2_down1.png")
                   .addToGameObject(robot);
-          robot->addComponent(new Health(1));
+          robot->addComponent(new Hitable);
           robot->addComponent(new Physics());
           robot->addComponent(new AIcontroller(
                                   ":/robot2/image/Robot2/r2_up1.png",
@@ -291,11 +311,20 @@ void loadScene(GameScene *gameScene) {
           break;
       }
   }
+  auto pause1 = new GameObject();
+  ImageTransformBuilder()
+          .setPos(QPointF(gameScene->width() * 0.75, gameScene->height() * 0.8))
+          .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+          .setImage(":/surface/image/surface/pause.png")
+          .addToGameObject(pause1);
+  gameScene->attachGameObject(pause1);
+  pause1->addComponent(new SummonDummy);
 }
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
-    stop = false;
+
+  stop = false;
   ui->setupUi(this);
   setWindowFlags(Qt::WindowCloseButtonHint | Qt:: MSWindowsFixedSizeDialogHint);
   setFixedSize(1000, 700);
@@ -320,9 +349,6 @@ MainWindow::MainWindow(QWidget *parent)
     crolBtn = new QPushButton;
     crolBtn->move(this->width() * 0.685, this->height() * 0.89);
 
-    pause = new QPushButton;
-    pause->move(this->width() * 0.83, this->height() * 0.8);
-
     exitBtn = new QPushButton;
     exitBtn->move(this->width() * 0.9, this->height() * 0.9);
 
@@ -331,14 +357,13 @@ MainWindow::MainWindow(QWidget *parent)
     introBtn = new QPushButton;
     introBtn->move(this->width() * 0.65, this->height() * 0.8);
 
-
   init_btn(startBtn, ":/surface/image/surface/start.png");
   init_btn(backBtn, ":/surface/image/surface/home_page.png");
   init_btn(crolBtn, ":/surface/image/surface/con_page.png");
   init_btn(toolBtn, ":/surface/image/surface/tool_page.png");
-  init_btn(pause, ":/surface/image/surface/pause.png");
   init_btn(exitBtn, ":/surface/image/surface/back.png");
   init_btn(introBtn, ":/surface/image/surface/rule.png");
+
 
   //controlBtn
    connect(crolBtn, &QPushButton::pressed, this, [=]{
@@ -367,10 +392,10 @@ MainWindow::MainWindow(QWidget *parent)
           startBtn->hide();
           introBtn->hide();
           exitBtn->hide();
-          pause->show();
           auto game2 = new GameScene();
           this->gameScene = game2;
           view->setScene(this->gameScene);
+          //this->gameScene->get_updateTimer()->start();
           loadScene(this->gameScene);
       });
   });
@@ -433,26 +458,6 @@ MainWindow::MainWindow(QWidget *parent)
           loadScene2(this->gameScene);
       });
   });
-  //pause
-  connect(pause, &QPushButton::pressed, this, [=]{
-      zoom(pause, 0, 10);
-      zoom(pause, 10, 0);
-      //延时进入
-      QTimer::singleShot(500, this, [=](){
-          change();
-          if(stop == true)
-          {
-              updateTimer->start();
-              stop = false;
-          }
-          else
-          {
-              updateTimer->stop();
-              stop = true;
-          }
-
-      });
-  });
         loadScene1(gameScene);
 }
 
@@ -472,6 +477,12 @@ void MainWindow::loadScene1(GameScene *gameScene)
     startBtn->show();
     introBtn->show();
     exitBtn->show();
+    QTextEdit text;
+    text.setParent(this);
+    text.setText(QString("12222222"));
+    text.setFontPointSize(100);
+    text.setFontFamily("Microsoft YaHei");
+    text.show();
 }
 
 void MainWindow::loadScene2(GameScene *gameScene)
@@ -539,6 +550,18 @@ void MainWindow::change()
 {
     auto ptr = gameScene->getGameObject("background");
     if(ptr != NULL)
-    gameScene->detachGameObject(ptr);
+        gameScene->detachGameObject(ptr);
+}
+
+void MainWindow::paintEvent(QPaintEvent *)
+{
+    //qDebug() << "in";
+    QPainter painter(this);
+    painter.setPen(Qt::white);
+    QFont font = painter.font();
+    font.setPixelSize(10);
+    font.setFamily("Microsoft YaHei");
+    painter.setFont(font);
+    painter.drawText(850, 160, QString::number(p1_score).toStdString().c_str());
 }
 

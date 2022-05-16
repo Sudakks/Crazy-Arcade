@@ -7,6 +7,7 @@
 #include "physics.h"
 #include "imagetransform.h"
 #include <QList>
+#include "health.h"
 class UserController : public Component
 {
 public:
@@ -48,6 +49,7 @@ private:
     Physics *physics;
     Transform *transform;
     ImageTransform * imageTransform;
+    Health* health;
 
 
 public :

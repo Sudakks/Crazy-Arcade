@@ -73,5 +73,10 @@ void GameObject::onClick(QGraphicsSceneMouseEvent *ev) {
 
 void GameObject::setParentGameScene(GameScene *gameScene) {
   this->setParent(gameScene);
-  this->gameScene = gameScene;
+    this->gameScene = gameScene;
+}
+
+GameScene *GameObject::get_scene()
+{
+    return this->gameScene;
 }

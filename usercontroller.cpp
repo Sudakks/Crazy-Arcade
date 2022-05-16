@@ -29,6 +29,13 @@ UserController::UserController (int speed, float range, int bomb_num, Qt::Key ke
     this->down1 = down1, this->down2 = down2, this->down3 = down3;
     this->right1 = right1, this->right2 = right2, this->right3 = right3;
     this->left1 = left1, this->left2 = left2, this->left3 = left3;
+
+    //this->score = new GameObject;
+    //score->addComponent(new Transform);
+    //Q_ASSERT(this->gameObject->get_scene() != NULL);
+    //this->gameObject->get_scene()->attachGameObject(score);
+    //q = score->getComponent<Transform>();
+    //q->setPos(0,0);
 }
 
 void UserController::onAttach () {
@@ -38,6 +45,7 @@ void UserController::onAttach () {
     Q_ASSERT ( imageTransform != nullptr );
     transform = this->gameObject->getComponent<Transform>();
     Q_ASSERT ( transform != nullptr );
+    health = this->gameObject->getComponent<Health>();
 }
 
 void UserController::onUpdate( float deltaTime ) {
@@ -91,7 +99,6 @@ void UserController::onUpdate( float deltaTime ) {
                 float bombY = trans->pos().y();
                 //哪一边碰到他
                 int temp = judge_dir(bombX, bombY);
-                //qDebug() << "方向是:" << temp;
                 if(temp > 0)
                 {
                     shoot->enable_move(temp);
@@ -101,6 +108,7 @@ void UserController::onUpdate( float deltaTime ) {
     }
     if(getKey(key_bomb) && bomb_num > 0 && limit <= 0)
     {
+        health->set_hit(false);
         limit = deltaTime * 60;
         //因为一次按键它会读入很多下，所以限制按键的读入(即隔多少秒之后才能继续读入)
         float x = this->transform->pos().x();
@@ -108,7 +116,6 @@ void UserController::onUpdate( float deltaTime ) {
         //此时新建一个炸弹的对象
         auto shooter = new GameObject();
         bomb_num--;
-        //qDebug() << "现在的炸弹数量为" << bomb_num;
         bomb_list.emplace_back(shooter);
         //表示按下了空格键,此时要新建一个炸弹进行处理
         ImageTransformBuilder()
@@ -145,7 +152,7 @@ void UserController::onUpdate( float deltaTime ) {
                vx -= 35 * speed;
            dir = LEFT;
         }
-        if (getKey(key_right) )
+        else if (getKey(key_right) )
         {
             right_num = (right_num + 1) % 31;
             if(right_num <= 10)
@@ -158,7 +165,7 @@ void UserController::onUpdate( float deltaTime ) {
                 vx += 35 * speed;
             dir = RIGHT;
         }
-        if (getKey(key_up) )
+        else if (getKey(key_up) )
         {
             up_num = (up_num + 1) % 21;
             if(up_num <= 10)
@@ -169,7 +176,7 @@ void UserController::onUpdate( float deltaTime ) {
                 vy -= 35 * speed;
             dir = UP;
         }
-        if (getKey(key_down) )
+        else if (getKey(key_down) )
         {
             down_num = (down_num + 1) % 31;
             if(down_num <= 10)
