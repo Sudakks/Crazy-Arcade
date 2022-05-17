@@ -97,6 +97,9 @@ void AIcontroller::onUpdate(float deltaTime)
             bomb->addComponent(new ImageTransform);
             bomb->addComponent(new Transform);
             bomb->addComponent(new Physics);
+            auto trans = bomb->getComponent<Transform>();
+            trans->setType(this->transform->type());
+            //qDebug() << this->transform->type();
             bomb_x = this->transform->pos().x(), bomb_y = this->transform->pos().y();
             bomb->addComponent(new Shooter(this->range, 0, this->transform->type()));//这个是调用userController的数据
             this->attachGameObject(bomb);
@@ -238,9 +241,9 @@ void AIcontroller::free_walk()
     if(last_dir == UP)
     {
         //up
-        if(judge(0, -30 * speed, UP))
+        if(judge(0, -35 * speed, UP))
         {
-            vy -= 30 * speed;
+            vy -= 35 * speed;
             change_image(UP);
             //qDebug() << "继续up";
             physics->setVelocity(vx, vy);
@@ -250,11 +253,10 @@ void AIcontroller::free_walk()
     else if(last_dir == LEFT)
     {
         //left
-        if(judge(-30 * speed, 0, LEFT))
+        if(judge(-35 * speed, 0, LEFT))
         {
-            vx -= 30 * speed;
+            vx -= 35 * speed;
             change_image(LEFT);
-            //qDebug() << "继续left";
             physics->setVelocity(vx, vy);
             return;
         }
@@ -262,11 +264,10 @@ void AIcontroller::free_walk()
     else if(last_dir == RIGHT)
     {
         //right
-        if(judge(30 * speed, 0, RIGHT))
+        if(judge(35 * speed, 0, RIGHT))
         {
-            vx += 30 * speed;
+            vx += 35 * speed;
             change_image(RIGHT);
-            //qDebug() << "继续right";
             physics->setVelocity(vx, vy);
             return;
         }
@@ -274,11 +275,10 @@ void AIcontroller::free_walk()
     else if(last_dir == DOWN)
     {
         //down
-        if(judge(0, 30 * speed, DOWN))
+        if(judge(0, 35 * speed, DOWN))
         {
-            vy += 30 * speed;
+            vy += 35 * speed;
             change_image(DOWN);
-            //qDebug() << "继续down";
             physics->setVelocity(vx, vy);
             return;
         }
@@ -286,10 +286,9 @@ void AIcontroller::free_walk()
     if(dir == 1)
     {
         //up
-        if(judge(0, -30 * speed, UP))
+        if(judge(0, -35 * speed, UP))
         {
-            //qDebug() << "判断能up";
-            vy -= 30 * speed;
+            vy -= 35 * speed;
             change_image(UP);
             last_dir = UP;
         }
@@ -299,10 +298,9 @@ void AIcontroller::free_walk()
     if(dir == 2)
     {
         //left
-        if(judge(-30 * speed, 0, LEFT))
+        if(judge(-35 * speed, 0, LEFT))
         {
-            //qDebug() << "判断能left";
-            vx -= 30 * speed;
+            vx -= 35 * speed;
             change_image(LEFT);
             last_dir = LEFT;
         }
@@ -312,10 +310,9 @@ void AIcontroller::free_walk()
     if(dir == 3)
     {
         //down
-        if(judge(0, 30 * speed, DOWN))
+        if(judge(0, 35 * speed, DOWN))
         {
-            //qDebug() << "判断能down";
-            vy += 30 * speed;
+            vy += 35 * speed;
             change_image(DOWN);
             last_dir = DOWN;
         }
@@ -325,15 +322,13 @@ void AIcontroller::free_walk()
     if(dir == 4)
     {
         //right
-        if(judge(30 * speed, 0, RIGHT))
+        if(judge(35 * speed, 0, RIGHT))
         {
-            //qDebug() << "判断能right";
-            vx += 30 * speed;
+            vx += 35 * speed;
             change_image(RIGHT);
             last_dir = RIGHT;
         }
     }
-    //qDebug() << "设置速度为" << vx << vy;
     physics->setVelocity(vx, vy);
 }
 
@@ -345,9 +340,9 @@ void AIcontroller::bomb_walk()
     quint32 dir = (QRandomGenerator::global()->generate()) % 4 + 1;
     if(last_dir == UP)
     {
-        if(judge(0, -30 * speed, UP) && (distance(0, -30 * speed) || out_of_range(0, -30 * speed, UP)))
+        if(judge(0, -35 * speed, UP) && (distance(0, -35 * speed) || out_of_range(0, -35 * speed, UP)))
         {
-            vy -= 30 * speed;
+            vy -= 35 * speed;
             change_image(UP);
             goto end;
         }
@@ -355,9 +350,9 @@ void AIcontroller::bomb_walk()
     else if(last_dir == LEFT)
     {
         //left
-        if(judge(-30 * speed, 0, LEFT) && ( distance(-30 * speed, 0) || out_of_range(-30 * speed, 0, LEFT)))
+        if(judge(-35 * speed, 0, LEFT) && ( distance(-35 * speed, 0) || out_of_range(-35 * speed, 0, LEFT)))
         {
-            vx -= 30 * speed;
+            vx -= 35 * speed;
             change_image(LEFT);
             goto end;
         }
@@ -365,9 +360,9 @@ void AIcontroller::bomb_walk()
     else if(last_dir == RIGHT)
     {
         //right
-        if(judge(30 * speed, 0, RIGHT) && ( distance(30 * speed, 0) || out_of_range(30 * speed, 0, RIGHT)))
+        if(judge(35 * speed, 0, RIGHT) && ( distance(35 * speed, 0) || out_of_range(35 * speed, 0, RIGHT)))
         {
-            vx += 30 * speed;
+            vx += 35 * speed;
             change_image(RIGHT);
             goto end;
         }
@@ -375,9 +370,9 @@ void AIcontroller::bomb_walk()
     else if(last_dir == DOWN)
     {
         //down
-        if(judge(0, 30 * speed, DOWN) && ( distance(0, 30 * speed) || out_of_range(0, 30 * speed, DOWN)))
+        if(judge(0, 35 * speed, DOWN) && ( distance(0, 35 * speed) || out_of_range(0, 35 * speed, DOWN)))
         {
-            vy += 30 * speed;
+            vy += 35 * speed;
             change_image(DOWN);
             goto end;
         }
@@ -385,9 +380,9 @@ void AIcontroller::bomb_walk()
     if(dir == 1)
     {
         //up
-        if(judge(0, -30 * speed, UP) && ( distance(0, -30 * speed) || out_of_range(0, -30 * speed, UP)))
+        if(judge(0, -35 * speed, UP) && ( distance(0, -35 * speed) || out_of_range(0, -35 * speed, UP)))
         {
-            vy -= 30 * speed;
+            vy -= 35 * speed;
             change_image(UP);
             last_dir = UP;
         }
@@ -397,9 +392,9 @@ void AIcontroller::bomb_walk()
     if(dir == 2)
     {
         //left
-        if(judge(-30 * speed, 0, LEFT) && ( distance(-30 * speed, 0) || out_of_range(-30 * speed, 0, LEFT)))
+        if(judge(-35 * speed, 0, LEFT) && ( distance(-35 * speed, 0) || out_of_range(-35 * speed, 0, LEFT)))
         {
-            vx -= 30 * speed;
+            vx -= 35 * speed;
             change_image(LEFT);
             //qDebug() << "最后是left";
             last_dir = LEFT;
@@ -410,9 +405,9 @@ void AIcontroller::bomb_walk()
     if(dir == 3)
     {
         //down
-        if(judge(0, 30 * speed, DOWN) && ( distance(0, 30 * speed) || out_of_range(0, 30 * speed, DOWN)))
+        if(judge(0, 35 * speed, DOWN) && ( distance(0, 35 * speed) || out_of_range(0, 35 * speed, DOWN)))
         {
-            vy += 30 * speed;
+            vy += 35 * speed;
             change_image(DOWN);
             last_dir = DOWN;
         }
@@ -422,9 +417,9 @@ void AIcontroller::bomb_walk()
     if(dir == 4)
     {
         //right
-        if(judge(30 * speed, 0, RIGHT) && ( distance(30 * speed, 0) || out_of_range(30 * speed, 0, RIGHT)))
+        if(judge(35 * speed, 0, RIGHT) && ( distance(35 * speed, 0) || out_of_range(35 * speed, 0, RIGHT)))
         {
-            vx += 30 * speed;
+            vx += 35 * speed;
             change_image(RIGHT);
             last_dir = RIGHT;
         }

@@ -51,11 +51,29 @@ void UserController::onUpdate( float deltaTime ) {
     if(tool_move > 0)
         tool_move -= deltaTime;
     if(tool_speed <= 0 && speed > 1)
+    {
         speed -= 1;
+        if(this->transform->type() == 1)
+            p1_tool_speed->setText(QString::number(speed));
+        else
+            p2_tool_speed->setText(QString::number(speed));
+    }
     if(tool_bomb_num <= 0 && bomb_num > 1)
+    {
         bomb_num -= 1;
+        if(this->transform->type() == 1)
+            p1_tool_num->setText(QString::number(bomb_num));
+        else
+            p2_tool_num->setText(QString::number(bomb_num));
+    }
     if(tool_range <= 0 && range > 1)
+    {
         range -= 1;
+        if(this->transform->type() == 1)
+            p1_tool_range->setText(QString::number(range));
+        else
+            p2_tool_range->setText(QString::number(range));
+    }
     float vx = 0 , vy = 0;
     if(limit > 0)
         limit -= deltaTime;
@@ -83,8 +101,8 @@ void UserController::onUpdate( float deltaTime ) {
                     bomb_list.pop_front();//先从队列中移走
                     this->detachGameObject(shooter);
                 }
-                continue;
-            }
+            }            
+
             else if(tool_move > 0 && shoot->get_dir() == 0 && shoot->get_wait_time() >=50)
             {
                 //说明这个炸弹还没有爆炸，但是如果人碰到了它，就要移动
@@ -101,7 +119,6 @@ void UserController::onUpdate( float deltaTime ) {
     }
     if(getKey(key_bomb) && bomb_num > 0 && limit <= 0)
     {
-        health->set_hit(false);
         limit = deltaTime * 60;
         //因为一次按键它会读入很多下，所以限制按键的读入(即隔多少秒之后才能继续读入)
         float x = this->transform->pos().x();
@@ -141,8 +158,8 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(left2);
             else if(left_num > 20 && left_num <= 30)
                 imageTransform->setImage(left3);
-           if(judge_walk(-35 * speed, 0, 1))
-               vx -= 35 * speed;
+           if(judge_walk(-40 * speed, 0, 1))
+               vx -= 40 * speed;
            dir = LEFT;
         }
         else if (getKey(key_right) )
@@ -154,8 +171,8 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(right2);
             else if(right_num > 20 && right_num <= 30)
                 imageTransform->setImage(right3);
-            if(judge_walk(35 * speed, 0, 2))
-                vx += 35 * speed;
+            if(judge_walk(40 * speed, 0, 2))
+                vx += 40 * speed;
             dir = RIGHT;
         }
         else if (getKey(key_up) )
@@ -165,8 +182,8 @@ void UserController::onUpdate( float deltaTime ) {
             imageTransform->setImage(up1);
             else if(up_num > 10 && up_num <= 20)
                 imageTransform->setImage(up2);
-            if(judge_walk(0, -35 * speed, 3))
-                vy -= 35 * speed;
+            if(judge_walk(0, -40 * speed, 3))
+                vy -= 40 * speed;
             dir = UP;
         }
         else if (getKey(key_down) )
@@ -178,8 +195,8 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(down2);
             else if(down_num > 20 && down_num <= 30)
                 imageTransform->setImage(down3);
-            if(judge_walk(0, 35 * speed, 4))
-                vy += 35 * speed;
+            if(judge_walk(0, 40 * speed, 4))
+                vy += 40 * speed;
             dir = DOWN;
         }
             physics->setVelocity(vx, vy);
@@ -324,16 +341,28 @@ void UserController::judge_tool(int x, int y)
         {
             speed += 1;
             tool_speed += 8;
+            if(this->transform->type() == 1)
+                p1_tool_speed->setText(QString::number(speed));
+            else
+                p2_tool_speed->setText(QString::number(speed));
         }
         else if(now == bomb_num_tool)
         {
             bomb_num += 1;
             tool_bomb_num += 8;
+            if(this->transform->type() == 1)
+                p1_tool_num->setText(QString::number(bomb_num));
+            else
+                p2_tool_num->setText(QString::number(bomb_num));
         }
         else if(now == range_tool)
         {
             tool_range += 8;
             range += 1;
+            if(this->transform->type() == 1)
+                p1_tool_range->setText(QString::number(range));
+            else
+                p2_tool_range->setText(QString::number(range));
         }
         else if(now == move_tool)
         {
@@ -351,7 +380,7 @@ int UserController::judge_dir(float bombX, float bombY)
     float downy = upy + 40;
     int GeY = bombX / 40, GeX = bombY / 40;
     int GeUp = upy / 40, GeDown = downy / 40, GeLeft = leftx / 40, GeRight = rightx / 40;
-    //判断是哪个方向碰到(采用距离判断)
+    //判断是哪个方向碰到
     if(dir == LEFT)
     {
         if(GeLeft == GeY && (GeUp == GeX || GeDown == GeX))

@@ -8,11 +8,7 @@
 Health::Health(int health) : health(health) {}
 
 void Health::beHit() {
-    if(have_hit == false)
-    {
-        have_hit = true;
-        health--;
-    }
+    health--;
     auto transform = this->gameObject->getComponent<Transform>();
     if(transform->type() == 1)
         live1->setText(QString::number(this->health));
@@ -46,7 +42,3 @@ void Health::beHit() {
   }
 }
 
-void Health::set_hit(int val)
-{
-    this->have_hit = val;
-}

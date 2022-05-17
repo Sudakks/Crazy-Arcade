@@ -43,11 +43,20 @@ void loadScene(GameScene *gameScene) {
   QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap(":/map/image/Map/dizhuan.png"));
   gameScene->addItem(pixmapItem);
   QGraphicsPixmapItem *pix = new QGraphicsPixmapItem(QPixmap(":/surface/image/surface/score1.png"));
-  pix->setOffset(820, 130);
+  pix->setOffset(820, 20);
   gameScene->addItem(pix);
+
   QGraphicsPixmapItem *pixx = new QGraphicsPixmapItem(QPixmap(":/surface/image/surface/score2.png"));
-  pixx->setOffset(820, 350);
+  pixx->setOffset(820, 170);
   gameScene->addItem(pixx);
+
+  QGraphicsPixmapItem *pix1 = new QGraphicsPixmapItem(QPixmap(":/surface/image/surface/score_r1.png"));
+  pix1->setOffset(820, 320);
+  gameScene->addItem(pix1);
+
+  QGraphicsPixmapItem *pix2 = new QGraphicsPixmapItem(QPixmap(":/surface/image/surface/score_r2.png"));
+  pix2->setOffset(820, 470);
+  gameScene->addItem(pix2);
 
 
   //加载地图图片
@@ -106,6 +115,8 @@ void loadScene(GameScene *gameScene) {
                             .setImage(":/map/image/Map/soft1.png")
                             .addToGameObject(wall);
                     wall->addComponent(new Hitable);
+                    auto tran = wall->getComponent<Transform>();
+                    tran->setType(0);
                 }
                 else if(My_map.get_map(i,j) == 2 && j % 2 == 0)
                 {
@@ -115,6 +126,8 @@ void loadScene(GameScene *gameScene) {
                             .setImage(":/map/image/Map/soft2.png")
                             .addToGameObject(wall);
                     wall->addComponent(new Hitable);
+                    auto tran = wall->getComponent<Transform>();
+                    tran->setType(0);
                 }
                 gameScene->attachGameObject(wall);
             }
@@ -154,7 +167,7 @@ void loadScene(GameScene *gameScene) {
   score->addComponent(new Transform);
   auto score_t = score->getComponent<Transform>();
   gameScene->attachGameObject(score);
-  score_t->setPos(870, 235);
+  score_t->setPos(870, 115);
   //init_player1
   while(1)
   {
@@ -193,8 +206,14 @@ void loadScene(GameScene *gameScene) {
           trans->setType(1);
           score1 = new QGraphicsSimpleTextItem(score_t);
           live1 = new QGraphicsSimpleTextItem(score_t);
+          p1_tool_num = new QGraphicsSimpleTextItem(score_t);
+          p1_tool_range = new QGraphicsSimpleTextItem(score_t);
+          p1_tool_speed = new QGraphicsSimpleTextItem(score_t);
           setFont(score1, "0", 0, 0);
-          setFont(live1, "3", 76, -86);
+          setFont(live1, "3", 76, -78);
+          setFont(p1_tool_num, "1", 76, -56);
+          setFont(p1_tool_range, "1", 76, -34);
+          setFont(p1_tool_speed, "1", 76, -8);
           break;
       }
   }
@@ -236,8 +255,14 @@ void loadScene(GameScene *gameScene) {
           trans->setType(2);
           score2 = new QGraphicsSimpleTextItem(score_t);
           live2 = new QGraphicsSimpleTextItem(score_t);
-          setFont(score2, "0", -3, 226);
-          setFont(live2, "3", 77, 137);
+          p2_tool_num = new QGraphicsSimpleTextItem(score_t);
+          p2_tool_range = new QGraphicsSimpleTextItem(score_t);
+          p2_tool_speed = new QGraphicsSimpleTextItem(score_t);
+          setFont(score2, "0", -3, 152);
+          setFont(live2, "3", 77, 73);
+          setFont(p2_tool_num, "1", 77, 94);
+          setFont(p2_tool_range, "1", 77, 117);
+          setFont(p2_tool_speed, "1", 77, 145);
           break;
       }
   }
@@ -270,6 +295,8 @@ void loadScene(GameScene *gameScene) {
           auto trans = robot->getComponent<Transform>();
           trans->setType(-1);
           gameScene->attachGameObject(robot);
+          score_r1 = new QGraphicsSimpleTextItem(score_t);
+          setFont(score_r1, "0", -3, 300);
           break;
       }
   }
@@ -302,12 +329,14 @@ void loadScene(GameScene *gameScene) {
           auto trans = robot->getComponent<Transform>();
           trans->setType(-2);
           gameScene->attachGameObject(robot);
+          score_r2 = new QGraphicsSimpleTextItem(score_t);
+          setFont(score_r2, "0", -3, 450);
           break;
       }
   }
   auto pause1 = new GameObject();
   ImageTransformBuilder()
-          .setPos(QPointF(gameScene->width() * 0.75, gameScene->height() * 0.8))
+          .setPos(QPointF(gameScene->width() * 0.75, gameScene->height() * 0.9))
           .setAlignment(Qt::AlignLeft | Qt::AlignTop)
           .setImage(":/surface/image/surface/pause.png")
           .addToGameObject(pause1);
