@@ -13,7 +13,7 @@ class UserController : public Component
 public:
     UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up1, QString up2, QString down1, QString down2, QString down3, QString left1, QString left2, QString left3, QString right1, QString right2, QString right3);
     //对应到泡泡堂游戏中，你可以将上下左右移动的四个键值通过构造函数传入，即可以利用其来操作两个玩家
-
+    QList<int> get_No_bomb();
 void onAttach () override;
 void onUpdate( float deltaTime ) override;
 
@@ -27,6 +27,7 @@ private:
     float tool_move = 0;
     int dir = 0;
     float limit = -1;//用来控制按下空格键多久才能继续按下(先设置为1.5s)
+
     //利用构造函数，分别表示两个玩家
     Qt::Key key_up;
     Qt::Key key_down;
@@ -44,6 +45,7 @@ private:
     int up_num = 0;
     int left_num = 0;
 
+    QList<int> No_bomb_list;
 
 private:
     Physics *physics;

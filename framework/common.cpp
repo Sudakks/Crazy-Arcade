@@ -23,6 +23,8 @@ int r1_score = 0;
 int r2_score = 0;
 int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
 int win = 0;//0表示游戏还在进行中
+int No_bomb = 0;
+
 QGraphicsSimpleTextItem *score1 = new QGraphicsSimpleTextItem();
 QGraphicsSimpleTextItem *score2 = new QGraphicsSimpleTextItem();
 QGraphicsSimpleTextItem *live1 = new QGraphicsSimpleTextItem();

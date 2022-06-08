@@ -28,6 +28,7 @@ extern int r1_score;
 extern int r2_score;
 extern int UP, DOWN, LEFT, RIGHT;
 extern int win;
+extern int No_bomb;
 
 extern QGraphicsSimpleTextItem *score1;
 extern QGraphicsSimpleTextItem *score2;

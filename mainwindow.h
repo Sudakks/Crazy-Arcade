@@ -2,10 +2,9 @@
 #define MAINWINDOW_H_
 
 #include <gamescene.h>
-#include "mybutton.h"
 #include <QGraphicsView>
 #include <QMainWindow>
-
+#include <QPushButton>
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;

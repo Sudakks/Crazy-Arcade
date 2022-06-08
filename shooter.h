@@ -10,7 +10,7 @@ class Transform;
 //将这个当作炸弹的类
 class Shooter : public Component {
  public:
-  Shooter(float range, float wait_time, int  userType);
+  Shooter(float range, float wait_time, int  userType, int No);
 
   void onAttach() override;
   void onUpdate(float deltaTime) override;
@@ -28,6 +28,7 @@ class Shooter : public Component {
   int type;
   int move = 0;
   int dir = 0;//这个表示炸弹要一直往哪个方向移动
+  int No;
 
 public:
   void set_wait_time(float t);

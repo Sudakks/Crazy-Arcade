@@ -6,9 +6,8 @@
 class Health : public Hitable {
  public:
   explicit Health(int health);
-
+  void change_health();
   void beHit() override;
-
  protected:
   int health;
 };

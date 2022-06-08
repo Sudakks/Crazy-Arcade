@@ -21,7 +21,6 @@
 #include "aicontroller.h"
 #include "health.h"
 #include <QPainter>
-#include "mybutton.h"
 #include <QTimer>
 #include <QPushButton>
 #include <QPropertyAnimation>

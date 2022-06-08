@@ -12,6 +12,7 @@
 #include "ammo.h"
 #include "gameobject.h"
 #include <QRandomGenerator>
+#include <QList>
 
 UserController::UserController (int speed, float range, int bomb_num, Qt::Key key_up, Qt::Key key_down, Qt::Key key_left, Qt::Key key_right, Qt::Key key_bomb, QString up1, QString up2, QString down1, QString down2, QString down3, QString left1, QString left2, QString left3, QString right1, QString right2, QString right3)
 {
@@ -29,6 +30,11 @@ UserController::UserController (int speed, float range, int bomb_num, Qt::Key ke
     this->down1 = down1, this->down2 = down2, this->down3 = down3;
     this->right1 = right1, this->right2 = right2, this->right3 = right3;
     this->left1 = left1, this->left2 = left2, this->left3 = left3;
+}
+
+QList<int> UserController::get_No_bomb()
+{
+    return No_bomb_list;
 }
 
 void UserController::onAttach () {
@@ -102,7 +108,6 @@ void UserController::onUpdate( float deltaTime ) {
                     this->detachGameObject(shooter);
                 }
             }            
-
             else if(tool_move > 0 && shoot->get_dir() == 0 && shoot->get_wait_time() >=50)
             {
                 //说明这个炸弹还没有爆炸，但是如果人碰到了它，就要移动
@@ -113,6 +118,7 @@ void UserController::onUpdate( float deltaTime ) {
                 if(temp > 0)
                 {
                     shoot->enable_move(temp);
+                    //qDebug() << "move";
                 }
             }
         }
@@ -128,8 +134,10 @@ void UserController::onUpdate( float deltaTime ) {
         bomb_num--;
         bomb_list.emplace_back(shooter);
         //表示按下了空格键,此时要新建一个炸弹进行处理
+        int GeX = (y + 15) / 40;
+        int GeY = (x + 15) / 40;
         ImageTransformBuilder()
-                .setPos(QPointF(x+20, y+20))
+                .setPos(QPointF(GeY * 40 +20, GeX * 40 +20))
                 .setImage(":/bomb1/image/Bomb1/1.png")
                 .setAlignment(Qt::AlignCenter)
                 .addToGameObject(shooter);
@@ -138,7 +146,8 @@ void UserController::onUpdate( float deltaTime ) {
         shooter->addComponent(new Transform);
         shooter->addComponent(new Physics);
         //这个好像不能用碰撞检测，因为没有item
-        shooter->addComponent(new Shooter(this->range, 0, this->transform->type()));
+        shooter->addComponent(new Shooter(this->range, 0, this->transform->type(), No_bomb));
+        No_bomb++;
         //这个是调用userController的数据
         //这个炸弹也要和玩家一样具有相同的type,这样才好把分加上去
         auto trans = shooter->getComponent<Transform>();
@@ -158,8 +167,8 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(left2);
             else if(left_num > 20 && left_num <= 30)
                 imageTransform->setImage(left3);
-           if(judge_walk(-40 * speed, 0, 1))
-               vx -= 40 * speed;
+           if(judge_walk(-45 * speed, 0, 1))
+               vx -= 45 * speed;
            dir = LEFT;
         }
         else if (getKey(key_right) )
@@ -171,8 +180,8 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(right2);
             else if(right_num > 20 && right_num <= 30)
                 imageTransform->setImage(right3);
-            if(judge_walk(40 * speed, 0, 2))
-                vx += 40 * speed;
+            if(judge_walk(45 * speed, 0, 2))
+                vx += 45 * speed;
             dir = RIGHT;
         }
         else if (getKey(key_up) )
@@ -182,8 +191,8 @@ void UserController::onUpdate( float deltaTime ) {
             imageTransform->setImage(up1);
             else if(up_num > 10 && up_num <= 20)
                 imageTransform->setImage(up2);
-            if(judge_walk(0, -40 * speed, 3))
-                vy -= 40 * speed;
+            if(judge_walk(0, -45 * speed, 3))
+                vy -= 45 * speed;
             dir = UP;
         }
         else if (getKey(key_down) )
@@ -195,8 +204,8 @@ void UserController::onUpdate( float deltaTime ) {
                 imageTransform->setImage(down2);
             else if(down_num > 20 && down_num <= 30)
                 imageTransform->setImage(down3);
-            if(judge_walk(0, 40 * speed, 4))
-                vy += 40 * speed;
+            if(judge_walk(0, 45 * speed, 4))
+                vy += 45 * speed;
             dir = DOWN;
         }
             physics->setVelocity(vx, vy);
@@ -376,15 +385,19 @@ int UserController::judge_dir(float bombX, float bombY)
 {
     float leftx = this->transform->pos().x();
     float upy = this->transform->pos().y();
-    float rightx = leftx + 33;
+    //qDebug() << bombX << bombY << "  a";
+    float rightx = leftx + 36;
     float downy = upy + 40;
     int GeY = bombX / 40, GeX = bombY / 40;
     int GeUp = upy / 40, GeDown = downy / 40, GeLeft = leftx / 40, GeRight = rightx / 40;
     //判断是哪个方向碰到
+    //qDebug() << dir << GeUp << GeDown << GeLeft << GeRight;
+    //qDebug() << GeX << GeY;
     if(dir == LEFT)
     {
         if(GeLeft == GeY && (GeUp == GeX || GeDown == GeX))
         {
+            //qDebug() << "1";
             return LEFT;
         }
     }
@@ -392,6 +405,7 @@ int UserController::judge_dir(float bombX, float bombY)
     {
         if(GeRight == GeY && (GeUp == GeX || GeDown == GeX))
         {
+            //qDebug() << "2";
             return RIGHT;
         }
     }
@@ -399,6 +413,7 @@ int UserController::judge_dir(float bombX, float bombY)
     {
         if(GeDown == GeX && (GeLeft == GeY || GeRight == GeY))
         {
+            //qDebug() << "3";
             return DOWN;
         }
     }
@@ -406,8 +421,10 @@ int UserController::judge_dir(float bombX, float bombY)
     {
         if(GeUp == GeX && (GeLeft == GeY || GeRight == GeY))
         {
+            //qDebug() << "4";
             return UP;
         }
     }
+    //qDebug() << "0";
     return 0;//return 0表示没有碰到
 }

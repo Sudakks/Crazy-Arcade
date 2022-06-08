@@ -99,10 +99,10 @@ void AIcontroller::onUpdate(float deltaTime)
             bomb->addComponent(new Physics);
             auto trans = bomb->getComponent<Transform>();
             trans->setType(this->transform->type());
-            //qDebug() << this->transform->type();
             bomb_x = this->transform->pos().x(), bomb_y = this->transform->pos().y();
-            bomb->addComponent(new Shooter(this->range, 0, this->transform->type()));//这个是调用userController的数据
+            bomb->addComponent(new Shooter(this->range, 0, this->transform->type(), No_bomb));//这个是调用userController的数据
             this->attachGameObject(bomb);
+            No_bomb++;
         }
     }
     if(into1 == false && into2 == false)

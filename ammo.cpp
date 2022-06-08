@@ -6,9 +6,11 @@
 #include "imagetransform.h"
 #include "component.h"
 #include "common.h"
+#include "usercontroller.h"
 
-Ammo::Ammo(int type) : Component(){
+Ammo::Ammo(int type, int No) : Component(){
     this->type = type;
+    this->No = No;
 }
 
 void Ammo::onAttach() {
@@ -27,34 +29,65 @@ void Ammo::onUpdate(float deltaTime) {
     if (transform == nullptr) continue;
     auto gameObject = transform->getParentGameObject();
     auto hitable = gameObject->getComponent<Hitable>();
-    if(transform->type() == 1)
+    //这个是被碰到的物体
+    auto user = gameObject->getComponent<UserController>();
+    if((transform->type() == 1 || transform->type() == 2) && user != nullptr)
     {
-        //player1
-        //imageTransform->setImage(":/player1/image/Player1/p1_die.png");
-        if(type == 2)
+        qDebug() << "player";
+        auto No_bomb_list = user->get_No_bomb();
+        if(No_bomb_list.size() == 0)
         {
-            //加分(就说明炸到的不是自己)
-            p2_score += player_score;
+            qDebug() << No << "   q";
+            No_bomb_list.prepend(No);
+            gameObject->getComponent<Health>()->change_health();
         }
-        else if(type == -1)
+        else
+        {            
+            for(int i = 0; i < No_bomb_list.size(); i++)
+            {
+                qDebug() << "现在是" << No_bomb_list[i];
+                if(No_bomb_list[i] == No)
+                {
+                    qDebug() << "标记";
+                    break;
+                }
+                if(i == No_bomb_list.size() - 1)
+                {
+                    qDebug() << No << "   q";
+                    No_bomb_list.prepend(No);
+                    gameObject->getComponent<Health>()->change_health();
+                }
+            }
+        }
+        if(transform->type() == 1)
         {
-            r1_score += player_score;
+            //player1
+            //imageTransform->setImage(":/player1/image/Player1/p1_die.png");
+            if(type == 2)
+            {
+                //加分(就说明炸到的不是自己)
+                p2_score += player_score;
+            }
+            else if(type == -1)
+            {
+                r1_score += player_score;
+            }
+            else if(type == -2)
+            {
+                r2_score += player_score;
+            }
         }
-        else if(type == -1)
+        else if(transform->type() == 2)
         {
-            r2_score += player_score;
+            //player2
+            //imageTransform->setImage(":/player2/image/Player2/p2_die.png");
+            if(type == 1)
+                p1_score += player_score;
+            else if(type == -1)
+                r1_score += player_score;
+            else if(type == -2)
+                r2_score += player_score;
         }
-    }
-    else if(transform->type() == 2)
-    {
-        //player2
-        //imageTransform->setImage(":/player2/image/Player2/p2_die.png");
-        if(type == 1)
-            p1_score += player_score;
-        else if(type == -1)
-            r1_score += player_score;
-        else if(type == -2)
-            r2_score += player_score;
     }
     if (hitable == nullptr) continue;
     //这里加上对类型的判断

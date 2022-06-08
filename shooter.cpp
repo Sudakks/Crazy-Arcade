@@ -13,10 +13,13 @@
 #include "physics.h"
 #include <QDebug>
 
-Shooter::Shooter(float range, float wait_time, int userType) : Component() {
+Shooter::Shooter(float range, float wait_time, int userType, int No) : Component() {
     this->range = range;
     this->wait_time = wait_time;
     this->type = userType;
+    this->No = No;
+    this->move = 0;
+    this->dir = 0;
     //所以我可以把道具的图片放到这个transform上面
 }
 
@@ -37,6 +40,7 @@ void Shooter::onUpdate(float deltaTime) {
        float vx = 0, vy = 0;
        if(judge_move() == true)
        {
+           //qDebug() << "能走";
            //表示还能继续走
            if(dir == UP)
                vy -= 60;
@@ -61,7 +65,7 @@ void Shooter::onUpdate(float deltaTime) {
        //直接在这个位置加上一个碰撞检测？
        auto ammo = new GameObject();
        ammo->addComponent(new Transform);
-       ammo->addComponent(new Ammo(this->transform->type()));
+       ammo->addComponent(new Ammo(this->transform->type(), this->No));
        auto amm = ammo->getComponent<Ammo>();
        auto flash = new QGraphicsPixmapItem(this->transform);
        flash->setPixmap(QPixmap(":/bomb1/image/Bomb1/transparency.png"));
@@ -256,7 +260,7 @@ void Shooter::develop_bomb(float offsetX, float offsetY)
     //利用这个添加光束火焰
     auto ammo = new GameObject();
     ammo->addComponent(new Transform);
-    ammo->addComponent(new Ammo(this->transform->type()));
+    ammo->addComponent(new Ammo(this->transform->type(), this->No));
     auto amm = ammo->getComponent<Ammo>();
     auto flash = new QGraphicsPixmapItem(this->transform);
     flash->setPixmap(QPixmap(":/flash/image/Flash/1.png"));
@@ -284,9 +288,11 @@ bool Shooter::judge_move()
     float offset = 5;
     float x = this->transform->pos().x();
     float y = this->transform->pos().y();
+    //这个应该是中间位置
+    float time = 0.0300;
     if(dir == UP)
     {
-        y -= speed * 0.0166;
+        y = y - 17 - speed * time;
         if(My_map.get_map(y / 40, (x + offset) / 40) > 0 || My_map.get_map(y / 40, (x + 37 - offset) / 40) > 0)
         {
             return false;
@@ -294,7 +300,7 @@ bool Shooter::judge_move()
     }
     else if(dir == DOWN)
     {
-        y += speed * 0.0166;
+        y = y + 17 + speed * time;
         if(My_map.get_map(y / 40, (x + offset) / 40) > 0 || My_map.get_map(y / 40, (x + 37 - offset) / 40) > 0)
         {
             return false;
@@ -302,7 +308,7 @@ bool Shooter::judge_move()
     }
     else if(dir == LEFT)
     {
-        x -= speed * 0.0166;
+        x = x - 17 -speed * time;
         if(My_map.get_map(y / 40, x / 40) > 0 || My_map.get_map((y + 37 - offset) / 40, x) > 0)
         {
             return false;
@@ -310,7 +316,7 @@ bool Shooter::judge_move()
     }
     else
     {
-        x += speed * 0.0166;
+        x = x + 17 + speed * time;
         if(My_map.get_map(y / 40, x / 40) > 0 || My_map.get_map((y + 37 - offset) / 40, x) > 0)
         {
             return false;
