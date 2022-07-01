@@ -88,7 +88,7 @@ void AIcontroller::onUpdate(float deltaTime)
             pathY.clear();
             pathX.clear();
         }
-        qDebug() << "正在bomb_walk";
+        //qDebug() << "正在bomb_walk";
         bomb_walk();
         //这个就属于放了炸弹，然后要判断是否规避了炸弹
     }
@@ -296,15 +296,15 @@ void AIcontroller::free_walk()
     }
     else if(tool_interval <= 0)
     {
-        qDebug() << "-----";
+       // qDebug() << "-----";
         int flag= find_tool(0, (this->transform->pos().y() + 15) / 40, (this->transform->pos().x() + 15) / 40, 0, 0);
         if(flag == 1)
         {
-            qDebug() << "路线的大小是" << pathX.size() << pathY.size();
+            /*qDebug() << "路线的大小是" << pathX.size() << pathY.size();
             for(int i = 0; i < pathX.size(); i++)
             {
                 qDebug() << pathX.at(i) << pathY.at(i);
-            }
+            }*/
             tool_walk();
             return;
         }
@@ -627,7 +627,7 @@ int AIcontroller::find_tool(int step, int X, int Y, int offsetX, int offsetY)
             pathX.prepend(X + offsetX);
             pathY.prepend(Y + offsetY);
             //qDebug() << "步数为" << pathX.size();
-            qDebug() << "现在的坐标是" << X + offsetX << Y + offsetY;
+            //qDebug() << "现在的坐标是" << X + offsetX << Y + offsetY;
             //应该是能找到的
             return 1;
         }
@@ -698,39 +698,39 @@ void AIcontroller::tool_walk()
     {
         X += 15;
         Y += 35;
-        qDebug() << "UP";
+        //qDebug() << "UP";
     }
     else if(last_dir == LEFT)
     {
         Y += 18;
         X += 27;
-        qDebug() << "LEFT";
+        //qDebug() << "LEFT";
     }
     else if(last_dir == DOWN)
     {
         Y += 5;
         X += 15;
-        qDebug() << "DOWN";
+        //qDebug() << "DOWN";
     }
     else if(last_dir == RIGHT)
     {
         Y += 18;
         //X += 2;
-        qDebug() << "RIGHT";
+        //qDebug() << "RIGHT";
     }
     int nowX = Y / 40;
     int nowY = X / 40;
     if(GeX == nowX && GeY == nowY)
     {
-        qDebug() << "现在所处的格子是" << GeX << GeY;
+        //qDebug() << "现在所处的格子是" << GeX << GeY;
         pathX.removeAt(0);
         pathY.removeAt(0);
         //qDebug() << "越过了一个格子";
-        qDebug() << "还要走" << pathX.size() << "步";
+        //qDebug() << "还要走" << pathX.size() << "步";
     }
     if(pathX.empty())
     {
-        qDebug() << "Done";
+        //qDebug() << "Done";
         tool_interval = 4 * 60;
         if(whether_bomb == 0)
             interval = 0;
@@ -742,14 +742,12 @@ void AIcontroller::tool_walk()
         {
             if(judge1(0, -45 * speed, UP))
             {
-                qDebug() << "继续up";
                 change_image(UP);
                 last_dir = UP;
                 physics->setVelocity(0, -45 * speed);
             }
             else
             {
-                qDebug() << "还没走到就清空了";
                 pathX.clear();
                 pathY.clear();
             }
@@ -758,14 +756,12 @@ void AIcontroller::tool_walk()
         {
             if(judge1(0, 45 * speed, DOWN))
             {
-                qDebug() << "继续down";
                 change_image(DOWN);
                 last_dir = DOWN;
                 physics->setVelocity(0, 45 * speed);
             }
             else
             {
-                qDebug() << "还没走到就清空了";
                 pathX.clear();
                 pathY.clear();
             }
@@ -774,14 +770,12 @@ void AIcontroller::tool_walk()
         {
             if(judge1(-45 * speed, 0, LEFT))
             {
-                qDebug() << "继续left";
                 change_image(LEFT);
                 last_dir = LEFT;
                 physics->setVelocity(-45 * speed, 0);
             }
             else
             {
-                qDebug() << "还没走到就清空了";
                 pathX.clear();
                 pathY.clear();
             }
@@ -790,14 +784,12 @@ void AIcontroller::tool_walk()
         {
             if(judge1(45 * speed, 0, RIGHT))
             {
-                qDebug() << "继续right";
                 change_image(RIGHT);
                 last_dir = RIGHT;
                 physics->setVelocity(45 * speed, 0);
             }
             else
             {
-                qDebug() << "还没走到就清空了";
                 pathX.clear();
                 pathY.clear();
             }

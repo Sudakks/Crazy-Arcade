@@ -26,7 +26,6 @@
 #include <QPropertyAnimation>
 #include <QTextEdit>
 #include "summondummy.h"
-
 void setFont(QGraphicsSimpleTextItem* text, QString content, int x, int y)
 {
     text->setBrush(Qt::black);
