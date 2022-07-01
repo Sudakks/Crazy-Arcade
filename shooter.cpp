@@ -37,10 +37,12 @@ void Shooter::onUpdate(float deltaTime) {
    wait_time += 1;
    if(move == 1)
    {
+       //qDebug() << "here";
        float vx = 0, vy = 0;
        if(judge_move() == true)
        {
            //qDebug() << "能走";
+           //天！我好感动，终于de好了一个千年bug，真的异常感动
            //表示还能继续走
            if(dir == UP)
                vy -= 60;
@@ -50,16 +52,21 @@ void Shooter::onUpdate(float deltaTime) {
                vx -= 60;
            else
                vx += 60;
+           this->physics->setVelocity(vx, vy);
        }
        else
+       {
+           this->physics->setVelocity(0, 0);
            move = 0;
-       this->physics->setVelocity(vx, vy);
+       }
    }
    if(wait_time == 180)
    {
        //此时要爆炸了(差不多是3s的时间)
        //新建一个ammo对象
        //随机数生成道具
+       move = 0;
+       this->physics->setVelocity(0, 0);
        float x = this->transform->pos().x() / 40;
        float y = this->transform->pos().y() / 40;
        //直接在这个位置加上一个碰撞检测？
@@ -76,38 +83,50 @@ void Shooter::onUpdate(float deltaTime) {
        for(int i = 1; i <= range; i++)
        {
            //四个方向(down)
-           if(My_map.get_map(y + i, x) != 0 && My_map.get_map(y + i, x) != 2)
+           if(My_map.get_map(y + i, x) == 1 || My_map.get_map(y + i, x) == 3)
                break;
             develop_bomb(-20 + 5, 20 + 35 * (i - 1));
             if(My_map.get_map(y + i, x) == 2)
+            {
+                My_map.set_map(y + i, x, 0);
                 change_map(y + i, x);
+            }
        }
        for(int i = 1; i <= range; i++)
        {
            //left
-           if(My_map.get_map(y, x - i) != 0 && My_map.get_map(y, x - i) != 2)
+           if(My_map.get_map(y, x - i) == 1 || My_map.get_map(y, x - i) == 3)
                break;
            develop_bomb(-20 + (-30) * i + 5, -20 + 5);
            if(My_map.get_map(y, x - i) == 2)
+           {
+               My_map.set_map(y, x - i, 0);
                change_map(y, x - i);
+           }
        }
        for(int i = 1; i <= range; i++)
        {
            //right
-           if(My_map.get_map(y, x + i) != 0 && My_map.get_map(y, x + i) != 2)
+           if(My_map.get_map(y, x + i) == 1 || My_map.get_map(y, x + i) == 3)
                break;
             develop_bomb(5 + 20 + 30 * (i - 1), -20 + 5);
             if(My_map.get_map(y, x + i) == 2)
+            {
+                My_map.set_map(y, x + i, 0);
                 change_map(y, x + i);
+            }
        }
        for(int i = 1; i <= range; i++)
        {
             //up
-           if(My_map.get_map(y - i, x) != 0 && My_map.get_map(y - i, x) != 2)
+           if(My_map.get_map(y - i, x) == 1 || My_map.get_map(y - i, x) == 3)
                break;
             develop_bomb(-20 + 5, -20 + (-35) * i);
             if(My_map.get_map(y - i, x) == 2)
+            {
+                My_map.set_map(y - i, x, 0);
                 change_map(y - i, x);
+            }
        }
    }
    else if(wait_time > 180)
@@ -189,11 +208,13 @@ int Shooter::random_tool()
 
 void Shooter::change_map(int x, int y)
 {
+    //My_map.set_map(x, y, 0);//如果没有抽到道具，还是相当于炸开
     int random =  random_tool();
     if(random == speed_tool || random == range_tool || random == bomb_num_tool || random == move_tool)
     {
         //新建一个gameObject然后把它挂到玩家的transform上面
         //或者是自己就是一个gameObject，然后自己也有transform，放进list里面，玩家捡到了就detach掉
+        My_map.set_map(x, y, random);
         auto tool = new GameObject();
         if(random == speed_tool)
         {
@@ -248,11 +269,6 @@ void Shooter::change_map(int x, int y)
         tool->addComponent(new ImageTransform);
         tool_list.emplace_back(tool);//并且把它加到道具队列中
     }
-    else
-    {
-        My_map.set_map(x, y, 0);//如果没有抽到道具，还是相当于炸开
-    }
-
 }
 
 void Shooter::develop_bomb(float offsetX, float offsetY)
@@ -269,6 +285,8 @@ void Shooter::develop_bomb(float offsetX, float offsetY)
     this->flash_list.emplace_back(flash);
     amm->set_collider(flash);
     attachGameObject(ammo);
+    //这个是用来加入ammo属性的东西，使其能有collider这个属性
+    //图片还是会显示，只是没有了这个object检测碰撞了
 }
 
 void Shooter::enable_move(int dir)
@@ -284,7 +302,7 @@ int Shooter::get_dir()
 
 bool Shooter::judge_move()
 {
-    float speed = 70;
+    float speed = 60;
     float offset = 5;
     float x = this->transform->pos().x();
     float y = this->transform->pos().y();
@@ -293,15 +311,16 @@ bool Shooter::judge_move()
     if(dir == UP)
     {
         y = y - 17 - speed * time;
-        if(My_map.get_map(y / 40, (x + offset) / 40) > 0 || My_map.get_map(y / 40, (x + 37 - offset) / 40) > 0)
+        if(My_map.get_map(y / 40, (x - 15) / 40) > 0 || My_map.get_map(y / 40, (x + 15) / 40) > 0)
         {
+
             return false;
         }
     }
     else if(dir == DOWN)
     {
         y = y + 17 + speed * time;
-        if(My_map.get_map(y / 40, (x + offset) / 40) > 0 || My_map.get_map(y / 40, (x + 37 - offset) / 40) > 0)
+        if(My_map.get_map(y / 40, (x - 15) / 40) > 0 || My_map.get_map(y / 40, (x + 15) / 40) > 0)
         {
             return false;
         }
@@ -309,7 +328,7 @@ bool Shooter::judge_move()
     else if(dir == LEFT)
     {
         x = x - 17 -speed * time;
-        if(My_map.get_map(y / 40, x / 40) > 0 || My_map.get_map((y + 37 - offset) / 40, x) > 0)
+        if(My_map.get_map((y - 15) / 40, x / 40) > 0 || My_map.get_map((y - 15) / 40, x / 40) > 0)
         {
             return false;
         }
@@ -317,7 +336,7 @@ bool Shooter::judge_move()
     else
     {
         x = x + 17 + speed * time;
-        if(My_map.get_map(y / 40, x / 40) > 0 || My_map.get_map((y + 37 - offset) / 40, x) > 0)
+        if(My_map.get_map((y - 15) / 40, x / 40) > 0 || My_map.get_map((y + 15) / 40, x / 40) > 0)
         {
             return false;
         }

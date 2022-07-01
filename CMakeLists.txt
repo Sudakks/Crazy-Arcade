@@ -67,6 +67,7 @@ endif()
 target_include_directories(QtGameFramework PRIVATE framework/)
 target_link_libraries(QtGameFramework PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
+
 set_target_properties(QtGameFramework PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

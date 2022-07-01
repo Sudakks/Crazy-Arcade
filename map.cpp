@@ -44,21 +44,20 @@ void map::init_Map()
     {
         quint32 x = (QRandomGenerator::global()->generate())%14;
         quint32 y = (QRandomGenerator::global()->generate())%20;
-        if(!Map[x][y])
+        if(!Map[x][y] && Map[x][y] != 2)
         {
             Map[x][y] = 1;
             i++;
         }
     }
-    for(int i = 6; i<=8; i++)
+    for(int i = 6; i <= 8; i++)
     {
-        for(int j = 8; j<= 10; j++)
+        for(int j = 8; j <= 10; j++)
         {
             Map[i][j] = 3;
         }
     }
     Map[6][10] = 0;
-
 }
 
 void map::set_map(int x, int y, int content)

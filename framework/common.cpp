@@ -24,6 +24,11 @@ int r2_score = 0;
 int UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
 int win = 0;//0表示游戏还在进行中
 int No_bomb = 0;
+int type_bomb = -5;//表示这个地方是炸弹然后修改map数组
+int type_tool = -6;//表示这个地方是炸弹，然后要让机器人去寻找
+int type_player = -7;
+int GeX1, GeY1;
+int GeX2, GeY2;
 
 QGraphicsSimpleTextItem *score1 = new QGraphicsSimpleTextItem();
 QGraphicsSimpleTextItem *score2 = new QGraphicsSimpleTextItem();
@@ -37,3 +42,9 @@ QGraphicsSimpleTextItem *p1_tool_range = new QGraphicsSimpleTextItem();
 QGraphicsSimpleTextItem *p2_tool_range = new QGraphicsSimpleTextItem();
 QGraphicsSimpleTextItem *score_r1 = new QGraphicsSimpleTextItem();
 QGraphicsSimpleTextItem *score_r2 = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *r1_tool_num = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *r2_tool_num = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *r1_tool_speed = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *r2_tool_speed = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *r1_tool_range = new QGraphicsSimpleTextItem();
+QGraphicsSimpleTextItem *r2_tool_range = new QGraphicsSimpleTextItem();

@@ -295,7 +295,13 @@ void loadScene(GameScene *gameScene) {
           trans->setType(-1);
           gameScene->attachGameObject(robot);
           score_r1 = new QGraphicsSimpleTextItem(score_t);
+          r1_tool_num = new QGraphicsSimpleTextItem(score_t);
+          r1_tool_range = new QGraphicsSimpleTextItem(score_t);
+          r1_tool_speed = new QGraphicsSimpleTextItem(score_t);
           setFont(score_r1, "0", -3, 300);
+          setFont(r1_tool_num, "1", 77, 245);
+          setFont(r1_tool_range, "1", 77, 268);
+          setFont(r1_tool_speed, "1", 77, 295);
           break;
       }
   }
@@ -329,7 +335,13 @@ void loadScene(GameScene *gameScene) {
           trans->setType(-2);
           gameScene->attachGameObject(robot);
           score_r2 = new QGraphicsSimpleTextItem(score_t);
+          r2_tool_num = new QGraphicsSimpleTextItem(score_t);
+          r2_tool_range = new QGraphicsSimpleTextItem(score_t);
+          r2_tool_speed = new QGraphicsSimpleTextItem(score_t);
           setFont(score_r2, "0", -3, 450);
+          setFont(r2_tool_num, "1", 77, 393);
+          setFont(r2_tool_range, "1", 77, 417);
+          setFont(r2_tool_speed, "1", 77, 444);
           break;
       }
   }
@@ -341,6 +353,7 @@ void loadScene(GameScene *gameScene) {
           .addToGameObject(pause1);
   gameScene->attachGameObject(pause1);
   pause1->addComponent(new SummonDummy);
+
 }
 
 MainWindow::MainWindow(QWidget *parent)

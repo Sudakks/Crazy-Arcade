@@ -30,6 +30,7 @@ UserController::UserController (int speed, float range, int bomb_num, Qt::Key ke
     this->down1 = down1, this->down2 = down2, this->down3 = down3;
     this->right1 = right1, this->right2 = right2, this->right3 = right3;
     this->left1 = left1, this->left2 = left2, this->left3 = left3;
+    last_X = 0, last_Y = 0;
 }
 
 QList<int> UserController::get_No_bomb()
@@ -83,6 +84,32 @@ void UserController::onUpdate( float deltaTime ) {
     float vx = 0 , vy = 0;
     if(limit > 0)
         limit -= deltaTime;
+    float x = this->transform->pos().x();
+    float y = this->transform->pos().y();
+    int GeX = (y + 15) / 40;
+    int GeY = (x + 15) / 40;
+    /*if(My_map.get_map(GeX, GeY) != 1 || My_map.get_map(GeX, GeY) != 2 || My_map.get_map(GeX, GeY) != 3)
+    {
+        My_map.set_map(GeX, GeY, -7);
+    }*/
+    if(this->transform->type() == 1)
+    {
+        //表明是玩家一
+        if(GeX1 != GeX || GeY1 != GeY)
+        {
+            //qDebug() << "现在所处的位置" << GeX << GeY;
+            GeX1 = GeX;
+            GeY1 = GeY;
+        }
+    }
+    else
+    {
+        if(GeX2 != GeX || GeY2 != GeY)
+        {
+            GeX2 = GeX;
+            GeY2 = GeY;
+        }
+    }
     if(bomb_list.size())
     {
         //表示有炸弹需要处理
@@ -93,6 +120,7 @@ void UserController::onUpdate( float deltaTime ) {
             auto trans = shooter->getComponent<Transform>();
             if(shoot->get_wait_time() >= 4 * 60)
             {
+                My_map.set_map(GeX, GeY, 0);//恢复
                 //表明这个炸弹已经要被销毁
                 if(trans->type() == this->transform->type())
                 {
@@ -108,34 +136,19 @@ void UserController::onUpdate( float deltaTime ) {
                     this->detachGameObject(shooter);
                 }
             }            
-            else if(tool_move > 0 && shoot->get_dir() == 0 && shoot->get_wait_time() >=50)
-            {
-                //说明这个炸弹还没有爆炸，但是如果人碰到了它，就要移动
-                float bombX = trans->pos().x();
-                float bombY = trans->pos().y();
-                //哪一边碰到他
-                int temp = judge_dir(bombX, bombY);
-                if(temp > 0)
-                {
-                    shoot->enable_move(temp);
-                    //qDebug() << "move";
-                }
-            }
         }
     }
     if(getKey(key_bomb) && bomb_num > 0 && limit <= 0)
     {
         limit = deltaTime * 60;
         //因为一次按键它会读入很多下，所以限制按键的读入(即隔多少秒之后才能继续读入)
-        float x = this->transform->pos().x();
-        float y = this->transform->pos().y();
+
         //此时新建一个炸弹的对象
         auto shooter = new GameObject();
         bomb_num--;
         bomb_list.emplace_back(shooter);
         //表示按下了空格键,此时要新建一个炸弹进行处理
-        int GeX = (y + 15) / 40;
-        int GeY = (x + 15) / 40;
+        My_map.set_map(GeX, GeY, type_bomb);
         ImageTransformBuilder()
                 .setPos(QPointF(GeY * 40 +20, GeX * 40 +20))
                 .setImage(":/bomb1/image/Bomb1/1.png")
@@ -208,7 +221,15 @@ void UserController::onUpdate( float deltaTime ) {
                 vy += 45 * speed;
             dir = DOWN;
         }
-            physics->setVelocity(vx, vy);
+        if(tool_move > 0)
+        {
+            judge_dir();
+        }
+        physics->setVelocity(vx, vy);
+        /*if(My_map.get_map(GeX, GeY) != 1 || My_map.get_map(GeX, GeY) != 2 || My_map.get_map(GeX, GeY) != 3)
+        {
+            My_map.set_map(GeX, GeY, 0);
+        }*/
     }
 }
 
@@ -281,8 +302,6 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     {
         //up
         y = up_y;
-        //qDebug() << "1所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w);
-        //qDebug() << "2所在的位置为" << (y + vy * 0.0166) / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w);
         if(My_map.get_map((y + vy * 0.0166) / wall_h, (left_x + offset2) / wall_w) >= 1 || My_map.get_map((y + vy * 0.0166) / wall_h, (right_x - offset2) / wall_w) >= 1)
             return false;
         else
@@ -296,8 +315,6 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     {
         //down
         y = down_y;
-        //qDebug() << "1所在的位置为" << y / wall_h << ", " << (left_x + offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (left_x + offset2) / wall_w);
-        //qDebug() << "2所在的位置为" << y / wall_h << ", " << (right_x - offset2) / wall_w << ",内容为" << My_map.get_map(y / wall_h, (right_x - offset2) / wall_w);
         if(My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((left_x + offset2) / wall_w)) >= 1 || My_map.get_map((int)((y + vy * 0.0166) / wall_h), (int)((right_x - offset2) / wall_w)) >= 1)
             return false;
         else
@@ -312,7 +329,6 @@ bool UserController::judge_walk(float vx, float vy, int dir)
     int mapX = nowX / wall_w;
     int mapY = nowY / wall_h;
     //
-    //qDebug() << "现在所在坐标为(" << mapY  << ',' << mapX << ")" << "， 内容为 " << My_map.get_map(mapY, mapX);
     if(My_map.get_map(mapY, mapX) >= 1)
     {
         return false;
@@ -322,7 +338,6 @@ bool UserController::judge_walk(float vx, float vy, int dir)
         judge_tool(mapY, mapX);
         return true;
     }
-
     //似乎好像改对了吧www太难了www
 }
 
@@ -341,6 +356,17 @@ void UserController::judge_tool(int x, int y)
             now = pos->type();
             tool_list.erase(begin + i);//先从队列中移走
             this->detachGameObject(tool);
+            My_map.set_map(x, y, 0);
+            //printf("\n");
+            //qDebug() << "以下是在捡到道具之后的判断";
+            /*for(int i = 0; i < 15; i++)
+            {
+                for(int j = 0; j < 20; j++)
+                {
+                    printf("%d ", My_map.get_map(i, j));
+                }
+                printf("\n");
+            }*/
             break;
         }
     }
@@ -381,50 +407,62 @@ void UserController::judge_tool(int x, int y)
     My_map.set_map(x, y, 0);
 }
 
-int UserController::judge_dir(float bombX, float bombY)
+void UserController::judge_dir()
 {
-    float leftx = this->transform->pos().x();
-    float upy = this->transform->pos().y();
-    //qDebug() << bombX << bombY << "  a";
-    float rightx = leftx + 36;
-    float downy = upy + 40;
-    int GeY = bombX / 40, GeX = bombY / 40;
-    int GeUp = upy / 40, GeDown = downy / 40, GeLeft = leftx / 40, GeRight = rightx / 40;
-    //判断是哪个方向碰到
-    //qDebug() << dir << GeUp << GeDown << GeLeft << GeRight;
-    //qDebug() << GeX << GeY;
-    if(dir == LEFT)
+    if(bomb_list.size())
     {
-        if(GeLeft == GeY && (GeUp == GeX || GeDown == GeX))
+        //表示有炸弹需要处理
+        for(int i = 0; i < bomb_list.size(); i++)
         {
-            //qDebug() << "1";
-            return LEFT;
+            auto shooter = bomb_list.at(i);
+            auto shoot = shooter->getComponent<Shooter>();
+            auto trans = shooter->getComponent<Transform>();
+            if(shoot->get_dir() == 0 && shoot->get_wait_time() >=50)
+            {
+                //说明这个炸弹还没有爆炸，但是如果人碰到了它，就要移动
+                int bombX = trans->pos().x() / 40;
+                int bombY = trans->pos().y() / 40;
+                //哪一边碰到他
+                float leftx = this->transform->pos().x();
+                float upy = this->transform->pos().y();
+                float rightx = leftx + 36;
+                float downy = upy + 40;
+                int GeUp = upy / 40, GeDown = downy / 40, GeLeft = leftx / 40, GeRight = rightx / 40;
+                //判断是哪个方向碰到
+                if(dir == LEFT)
+                {
+                    if(GeLeft == bombX && (GeUp == bombY || GeDown == bombY))
+                    {
+                        shoot->enable_move(LEFT);
+                        My_map.set_map(bombY, bombX, 0);
+                    }
+                }
+                else if(dir == RIGHT)
+                {
+                    if(GeRight == bombX && (GeUp == bombY || GeDown == bombY))
+                    {
+                        shoot->enable_move(RIGHT);
+                        My_map.set_map(bombY, bombX, 0);
+                    }
+                }
+                else if(dir == DOWN)
+                {
+                    if(GeDown == bombY && (GeLeft == bombX || GeRight == bombX))
+                    {
+                        shoot->enable_move(DOWN);
+                        My_map.set_map(bombY, bombX, 0);
+                    }
+                }
+                else
+                {
+                    if(GeUp == bombY && (GeLeft == bombX || GeRight == bombX))
+                    {
+                        shoot->enable_move(UP);
+                        My_map.set_map(bombY, bombX, 0);
+                    }
+                }
+            }
         }
     }
-    else if(dir == RIGHT)
-    {
-        if(GeRight == GeY && (GeUp == GeX || GeDown == GeX))
-        {
-            //qDebug() << "2";
-            return RIGHT;
-        }
-    }
-    else if(dir == DOWN)
-    {
-        if(GeDown == GeX && (GeLeft == GeY || GeRight == GeY))
-        {
-            //qDebug() << "3";
-            return DOWN;
-        }
-    }
-    else
-    {
-        if(GeUp == GeX && (GeLeft == GeY || GeRight == GeY))
-        {
-            //qDebug() << "4";
-            return UP;
-        }
-    }
-    //qDebug() << "0";
-    return 0;//return 0表示没有碰到
+
 }

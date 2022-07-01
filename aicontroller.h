@@ -24,20 +24,29 @@ bool now_at();
 void free_walk();
 void bomb_walk();
 void change_image(int dir);
+void judge_tool(int x, int y);
+int find_tool(int step, int X, int Y, int offsetX, int offsetY);
+void tool_walk();
+int judge1(int vx, int vy, int dir);
 
 private:
     Physics *physics;
     Transform *transform;
     ImageTransform * imageTransform;
 
-    //int bomb_num = 1;//这个是机器人拥有的炸弹数量
-    int interval = 12 * 60;//表示至少每一次隔7s才放炸弹
+    int interval = 7 * 60;//表示至少每一次隔7s才放炸弹
+    int tool_interval = 6 * 60;//相当于每隔4s去找一次道具
     int bomb_time = 0;//表示炸弹爆炸的整个时长，即4s
 
     int range = 1;//机器人的炸弹范围
     int speed = 1;
+    int bomb_num = 1;//这个是机器人拥有的炸弹数量
+    float tool_bomb_num = 0;//其实不捡这个道具，因为机器人就是按照一定频率放💣
+    float tool_speed = 0;
+    float tool_range = 0;
+    float tool_move = 0;
 
-    double bomb_x = 0;
+    double bomb_x = 0;//这个是机器人放炸弹的坐标
     double bomb_y = 0;
     //因为机器人是横平竖直地走，所以只用考虑一个方向上它是否变小了
     QString up1, up2;
@@ -52,6 +61,8 @@ private:
     //逃离炸弹的逻辑是：判断两个，只要有一个满足即可
     //一个是离炸弹中心的位置越来越远， 一个是没有跑到炸弹的爆炸范围里
     //第一个主要是针对刚开始逃离炸弹，第二个主要是后期不跑到炸弹里面
+    QList<int> pathX;//这个用来存机器人要走的路线的坐标位置
+    QList<int> pathY;//相互对应的是X和Y的坐标，表示他们每一步要走的路线
 
     int down_num = 0;
     int right_num = 0;

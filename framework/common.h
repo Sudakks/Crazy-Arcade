@@ -29,6 +29,13 @@ extern int r2_score;
 extern int UP, DOWN, LEFT, RIGHT;
 extern int win;
 extern int No_bomb;
+extern int type_bomb;//似乎是为了机器人躲开炸弹而设计的
+extern int type_tool;
+extern int type_player;
+extern int GeX1;//分别表示玩家现在所处的位置
+extern int GeY1;
+extern int GeX2;
+extern int GeY2;
 
 extern QGraphicsSimpleTextItem *score1;
 extern QGraphicsSimpleTextItem *score2;
@@ -42,4 +49,10 @@ extern QGraphicsSimpleTextItem *p1_tool_range;
 extern QGraphicsSimpleTextItem *p2_tool_range;
 extern QGraphicsSimpleTextItem *score_r1;
 extern QGraphicsSimpleTextItem *score_r2;
+extern QGraphicsSimpleTextItem *r1_tool_num;
+extern QGraphicsSimpleTextItem *r2_tool_num;
+extern QGraphicsSimpleTextItem *r1_tool_speed;
+extern QGraphicsSimpleTextItem *r2_tool_speed;
+extern QGraphicsSimpleTextItem *r1_tool_range;
+extern QGraphicsSimpleTextItem *r2_tool_range;
 #endif // COMMON_H

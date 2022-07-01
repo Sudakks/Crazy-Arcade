@@ -7,6 +7,7 @@
 #include "component.h"
 #include "common.h"
 #include "usercontroller.h"
+#include "transformbuilder.h"
 
 Ammo::Ammo(int type, int No) : Component(){
     this->type = type;
@@ -33,11 +34,10 @@ void Ammo::onUpdate(float deltaTime) {
     auto user = gameObject->getComponent<UserController>();
     if((transform->type() == 1 || transform->type() == 2) && user != nullptr)
     {
-        qDebug() << "player";
+        //qDebug() << "player";
         auto No_bomb_list = user->get_No_bomb();
         if(No_bomb_list.size() == 0)
         {
-            qDebug() << No << "   q";
             No_bomb_list.prepend(No);
             gameObject->getComponent<Health>()->change_health();
         }
@@ -45,15 +45,12 @@ void Ammo::onUpdate(float deltaTime) {
         {            
             for(int i = 0; i < No_bomb_list.size(); i++)
             {
-                qDebug() << "现在是" << No_bomb_list[i];
                 if(No_bomb_list[i] == No)
                 {
-                    qDebug() << "标记";
                     break;
                 }
                 if(i == No_bomb_list.size() - 1)
                 {
-                    qDebug() << No << "   q";
                     No_bomb_list.prepend(No);
                     gameObject->getComponent<Health>()->change_health();
                 }
@@ -112,8 +109,13 @@ void Ammo::judge_type(Transform *transform, GameObject* gameObject)
     auto imageTransform = gameObject->getComponent<ImageTransform>();
     if(transform->type() == -1)
     {
-        //robot1
-        //imageTransform->setImage(":/robot1/image/Robot1/r1_die.png");
+        auto die = new GameObject;
+        ImageTransformBuilder()
+                .setPos(QPointF(825, 410))
+                .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                .setImage(":/surface/image/surface/lose.png")
+                .addToGameObject(die);
+        attachGameObject(die);
         if(type == 1)
             p1_score += robot_score;
         else if(type == 2)
@@ -123,8 +125,13 @@ void Ammo::judge_type(Transform *transform, GameObject* gameObject)
     }
     else if(transform->type() == -2)
     {
-        //robot2
-        //imageTransform->setImage(":/robot2/image/Robot2/r2_die.png");
+        auto die = new GameObject;
+        ImageTransformBuilder()
+                .setPos(QPointF(825, 560))
+                .setAlignment(Qt::AlignLeft | Qt::AlignTop)
+                .setImage(":/surface/image/surface/lose.png")
+                .addToGameObject(die);
+        attachGameObject(die);
         if(type == 1)
             p1_score += robot_score;
         else if(type == 2)
@@ -144,9 +151,9 @@ void Ammo::judge_type(Transform *transform, GameObject* gameObject)
         else if(type == -2)
             r2_score += soft_score;
         //通过这里改变地图的表示
-        float X = transform->pos().x();
-        float Y = transform->pos().y();
+        //float X = transform->pos().x();
+        //float Y = transform->pos().y();
         //注意X和Y是反过来的
-        My_map.set_map(Y / 40, X / 40, 0);
+        //My_map.set_map(Y / 40, X / 40, 0);
     }
 }

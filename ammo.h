@@ -19,7 +19,7 @@ class Ammo : public Component {
  protected:
   Transform *transform = nullptr;
   QGraphicsItem *collider = nullptr;
-  float timeToLive = 61;//这个是炸弹显示的时间（即等待爆炸的时间）
+  float timeToLive = 10;//这个是炸弹显示的时间（即等待爆炸的时间）
   QGraphicsItem* flash;//这个表示附着在其上的图片（利用这个找到对应的图片然后进行更换）
   int type;
   int No;
