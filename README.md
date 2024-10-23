@@ -11,11 +11,14 @@
 
 ## Part2
 - Transplanted part1 into Qt platform
-- Designed Ui page, including the main menu, help screen and gameplay screen
+- Designed UI：
+  -  accomplished the main menu, help screen and gameplay screen
+  -  free jump between these pages
+  -  players' characters, map layout, attack effects
 - Dynamic effects：
-  - changes in the way characters move
-  - explosion effects for thrown weapons
-  - Players' interaction with items on map
+  - changes of characters' actions when moving
+  - explosion effects of thrown weapons
+  - players' interaction with items on map
 - Added simple NPCs(can only move)
 
 ## Part3
