@@ -4,6 +4,11 @@
 - Involving NPCs' behaviors, try like random walk algorithm, DFS algorithm and so on
 - All based on Qt, using C++
 
+## Demo
+
+https://github.com/user-attachments/assets/8b211b4b-4fc9-4740-869b-f61703bd38d3
+
+
 
 ## Part1
 - Implemented a basic logic on Visual Studio and printed everything on terminal, including the interaction page
